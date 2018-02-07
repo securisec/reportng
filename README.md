@@ -7,7 +7,7 @@ Currently, reportng supports the following:
 - Self populating dropdown menu for report sections.
 
 # Installation
-> `pip install reportng`
+> `pip install -U reportng`
 
 # Example
 ```python
