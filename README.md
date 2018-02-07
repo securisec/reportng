@@ -21,7 +21,6 @@ report = r.report_header()
 report += r.report_section('Multiline Demo', """
 One line
 Two line
-합시다
 """)
 
 output = Popen('ls /tmp', shell=True, stdout=PIPE).stdout.read()
