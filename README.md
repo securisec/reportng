@@ -6,10 +6,10 @@ Currently, reportng supports the following:
 - Search and highlight
 - Self populating dropdown menu for report sections.
 
-# Installation
+## Installation
 > `pip install -U reportng`
 
-# Example
+## Example
 ```python
 from reportng import reportng
 from subprocess import Popen, PIPE
@@ -40,7 +40,7 @@ report += r.report_footer(message='Hello from securisec!', twitter='https://twit
 r.save_report(report, 'demo_report.html')
 ```
 
-## Main methods
+### Main methods
 - *class* ReportWriter(*report_name*, *brand*)
     - *report_name*: Name of report
     - *brand*: Name of company/tool/person creating the report
