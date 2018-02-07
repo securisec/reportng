@@ -6,6 +6,9 @@ Currently, reportng supports the following:
 - Search and highlight
 - Self populating dropdown menu for report sections.
 
+# Installation
+> `pip install reportng`
+
 # Example
 ```python
 from subprocess import Popen, PIPE
