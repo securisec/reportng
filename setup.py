@@ -11,4 +11,7 @@ setup(
     download_url='https://github.com/securisec/reportng/archive/0.1.tar.gz',
     keywords=['report', 'reporting', 'bootstrap'],
     classifiers=[],
+    install_requires=[
+        'dominate'
+    ]
 )
