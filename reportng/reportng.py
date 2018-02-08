@@ -6,7 +6,6 @@ Usage is simple. Follows header, body..., footer structure
 import os
 import logging
 import urllib2
-
 try:
     import dominate
     import dominate.tags as tag
@@ -376,3 +375,4 @@ class ReportWriter:
 # TODO: something that will allow user to loop and add content
 # TODO: integrate components of mark.js. Somehow to filter inside a section
 # TODO: make header method mandatory
+# TODO: create a new class to handle all the hardcoded js and css urls
