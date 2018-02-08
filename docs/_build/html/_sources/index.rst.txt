@@ -4,21 +4,18 @@ reportng
 It leverages Bootstrap 4 to automatically create using user defined bootswatch themes.
 ``reportng`` is capable of handling any python out including but not limited to api output, stdio output, sql queries etc.
 
-Some example use cases of ``reportng`` are:
-- Create a report for a tool
-- Create a report of a test
-- Create a report of debugging
-- etc...
+Some example use cases of ``reportng`` are
+
+* Create a report for a tool
+* Create a report of a test
+* Create a report of debugging
+* etc...
 
 Installation
 ------------
 .. code-block:: bash
 
     pip install reportng
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
 
 Documentation
 -------------
@@ -28,6 +25,11 @@ Documentation
 .. autoclass:: ReportWriter
     
     .. automethod:: __init__
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
 
 
 Indices and tables
