@@ -10,7 +10,7 @@
  */
 
 
-/* Non-minified version JS is _stemmer.js if file is provided */
+/* Non-minified version JS is _stemmer.js if file is provided */ 
 /**
  * Porter Stemmer
  */
@@ -192,6 +192,7 @@ var Stemmer = function () {
         return w;
     }
 }
+
 
 
 /**
@@ -555,7 +556,7 @@ var Search = {
                             Search.output.append(listItem);
                             listItem.slideDown(5, function () {
                                 displayNextItem();
-                            });
+                    });
                         }
                     });
                 } else {

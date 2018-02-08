@@ -13,13 +13,21 @@ Some example use cases of ``reportng`` are:
 Installation
 ------------
 .. code-block:: bash
-    pip install reportng
 
+    pip install reportng
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+Documentation
+-------------
+.. automodule:: reportng
+    :members:
+
+.. autoclass:: ReportWriter
+    
+    .. automethod:: __init__
 
 
 Indices and tables

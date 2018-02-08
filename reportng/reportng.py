@@ -39,9 +39,11 @@ class ReportWriter:
     def __init__(self, report_name, brand, asciinema=False, code_highlight=False):
         """
         Assign theme and report name
-        :brand str: Name of the company/tester
-        :report_name str: Name of report. Default is Sample report
-        :asciinema bool: Set to true to use asciinema's in report. Default is False
+
+        :param str brand: Name of the company/tester
+        :param str report_name: Name of report. Default is Sample report
+        :param bool asciinema: Set to true to use asciinema's in report. Default is False
+        :param bool code_highlight: Set to True in order to use code highlighting
         """
         self.report_name = report_name
         self.brand = brand
@@ -56,9 +58,9 @@ class ReportWriter:
         """
         Controls the link and script tags in the head. This method should always be called
         at the top
-        :theme str: Name of any bootswatch theme. Default is litera
-        :highlight_color str: any rgb color. default is #f1c40f
-        :asciinema bool: Set to true to use intigrate asciinema. Default is False
+
+        :param str theme: Name of any bootswatch theme. Default is lux
+        :param str highlight_color: any rgb color. default is #f1c40f
         :return: The head tag for the report.
         """
 
@@ -83,6 +85,7 @@ class ReportWriter:
                 """
             ))
             # JS to populate the navbar dropdown
+            tag.comment('JS to populate the navbar dropdown')
             tag.script(raw(
                 """
                 function populateDropdown() {
@@ -100,6 +103,7 @@ class ReportWriter:
                 """
             ))
             # script that allows for smooth scrolling and adds padding for navbar
+            tag.comment('script that allows for smooth scrolling and adds padding for navbar')
             tag.script(raw(
                 """
                 $(document).on('click', 'a[href^="#"]', function (event) {
@@ -111,6 +115,7 @@ class ReportWriter:
                 """
             ))
             # js to filter in the dropdown menu
+            tag.comment('js to filter in the dropdown menu')
             tag.script(raw(
                 """
                 $(document).ready(function(){
@@ -124,6 +129,7 @@ class ReportWriter:
                 """
             ))
             # style sheets
+            tag.comment('style sheets')
             tag.link(rel="stylesheet", type="text/css",
                      href="https://bootswatch.com/4/%s/bootstrap.min.css" % theme)
             tag.link(href="https://use.fontawesome.com/releases/v5.0.6/css/all.css",
@@ -131,11 +137,13 @@ class ReportWriter:
 
             # css for asciinema
             if self.asciinema:
+                tag.comment('css for asciinema')
                 tag.link(rel="stylesheet", type="text/css",
                          href="https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/2.4.1/asciinema-player.min.css")
 
             # css and js for highlight.js
             if self.code_highlight:
+                tag.comment('css and js for highlight.js')
                 tag.link(rel="stylesheet",
                          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css")
                 tag.script(
@@ -147,6 +155,7 @@ class ReportWriter:
                 ))
 
             # search highlight color control
+            tag.comment('search highlight color control')
             tag.style('span.highlight{background:  %s;}' %
                       highlight_color)
 
@@ -192,12 +201,12 @@ class ReportWriter:
                        title_bg=True):
         """
         This form the main body of the report
-        :title string: The h1/header title of the section
-        :pre_tag bool: Default is True and treats content as monospaced. Set to False to use p tag
-        :content string: The content for this section
-        :tag_color str: The severity color of the section.
-        :title_bg bool: Controls if the header background or text is colored. Default is True
-                           and lets background color.
+
+        :param str title: The h1/header title of the section
+        :param bool pre_tag: Default is True and treats content as monospaced. Set to False to use p tag
+        :param str content: The content for this section
+        :param str tag_color: The severity color of the section.
+        :param bool title_bg: Controls if the header background or text is colored. Default is True and lets background color.
         :return: a jumbotron object
         """
         if title_bg:
@@ -224,7 +233,7 @@ class ReportWriter:
 
     def report_add_image_carousel(self, *args):
         """
-        :*image_links list: A list of image paths
+        :param list args: A list of image paths
         :return: image jumbotron carousel container
         """
 
@@ -279,8 +288,9 @@ class ReportWriter:
     def report_asciinema(self, asciinema_link, title=''):
         """
         Section creates a jumbotron to house an asciinema
-        :asciinema_link str: Link to asciinema. Could be http/s or local files
-        :title str: Set the title of the asciinema. If set, it will create its own section.
+
+        :param str asciinema_link: Link to asciinema. Could be http/s or local files
+        :param str title: Set the title of the asciinema. If set, it will create its own section.
         """
         logging.warning('This method only works with asciinema links because of the way\n \
             browsers enforce CORS')
@@ -313,6 +323,13 @@ class ReportWriter:
         return str(a)
 
     def report_code_section(self, title, code):
+        """
+        This section can use used to add code containers that will be lexed and highlighted using highlight.js
+
+        :param str title: Title of the code section.
+        :param str code: Code. Use pre and code tags so multiline code is fine
+        :return: a string code section
+        """
         if not self.code_highlight:
             raise ObjectNotInitiated, 'To integrate code highlighting, set code_highlight=True in ReportWriter'
         with tag.div(_class="jumbotron container context",
@@ -324,7 +341,8 @@ class ReportWriter:
     def report_notes(self, content):
         """
         Simple method to added some center aligned text.
-        :content str: content to add
+
+        :param str content: content to add
         """
         with tag.div(_class="container text-center", style="margin-top:-30;") as s:
             tag.p(content)
@@ -333,8 +351,9 @@ class ReportWriter:
     def report_footer(self, message='', **kwargs):
         """
         Returns the footer object. Supports social media
-        :message: A message in the footer
-        :kwargs: Supported paramters are email, linkedin, github and twitter
+
+        :param str message: A message in the footer
+        :param dict kwargs: Supported paramters are email, linkedin, github and twitter
         """
         # creates the footer
         with tag.footer(_class="page-footer") as footer:
@@ -363,8 +382,9 @@ class ReportWriter:
     def save_report(self, all_objects, path):
         """
         Saves the html file to disk
-        :all_objects: The tally of all the objects
-        :path: path to save the file
+
+        :param str all_objects: The tally of all the objects
+        :param str path: path to save the file
         """
         with open(os.path.expanduser(path), 'w+') as save:
             save.write(str(all_objects))
