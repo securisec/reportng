@@ -4,9 +4,15 @@ Python report generator that wraps around bootstrap 4 using dominate.
 Usage is simple. Follows header, body..., footer structure
 """
 import os
-import dominate
-import dominate.tags as tag
-from dominate.util import raw
+import logging
+import urllib2
+
+try:
+    import dominate
+    import dominate.tags as tag
+    from dominate.util import raw
+except ImportError:
+    print 'pip install dominate'
 
 # ugly way to address unicode encode issues
 import sys
@@ -21,37 +27,45 @@ class NotValidTag(Exception):
     pass
 
 
+class ObjectNotInitiated(Exception):
+    pass
+
+
 class ReportWriter:
     """
     The main class that is used. Modifiable parameters are report_name,
     theme, brand and highlight_color
     """
 
-    def __init__(self, report_name, brand):
+    def __init__(self, report_name, brand, asciinema=False, code_highlight=False):
         """
         Assign theme and report name
         :brand str: Name of the company/tester
         :report_name str: Name of report. Default is Sample report
+        :asciinema bool: Set to true to use asciinema's in report. Default is False
         """
         self.report_name = report_name
         self.brand = brand
         self.document = dominate.document(title=self.report_name)
+        self.asciinema = asciinema
+        self.code_highlight = code_highlight
 
     def convert_to_string(self, s):
         return '%s' % s
 
-    def report_header(self, theme='lux',
-                      highlight_color='#f1c40f'):
+    def report_header(self, theme='lux', highlight_color='#f1c40f'):
         """
         Controls the link and script tags in the head. This method should always be called
         at the top
         :theme str: Name of any bootswatch theme. Default is litera
-        :highlight_color str: any rgb color. default is #f1c40f 
+        :highlight_color str: any rgb color. default is #f1c40f
+        :asciinema bool: Set to true to use intigrate asciinema. Default is False
         :return: The head tag for the report.
         """
+
         with self.document.head as report_head:
             # link and script builder for bootstrap 4
-            tag.comment('Created using easyreport by securisec')
+            tag.comment('Created using reportng by securisec')
             tag.meta(charset="utf-8", name="viewport",
                      content="width=device-width, initial-scale=1")
             tag.script(
@@ -60,6 +74,7 @@ class ReportWriter:
                 src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js")
             tag.script(
                 src="https://cdn.rawgit.com/securisec/misc_things/f8d2b846/highlight.js")
+            # constructing this way to avoid loading un needed js and css
             # JS for search highlighting
             tag.script(raw(
                 """
@@ -115,6 +130,23 @@ class ReportWriter:
             tag.link(href="https://use.fontawesome.com/releases/v5.0.6/css/all.css",
                      rel="stylesheet")
 
+            # css for asciinema
+            if self.asciinema:
+                tag.link(rel="stylesheet", type="text/css",
+                         href="https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/2.4.1/asciinema-player.min.css")
+
+            # css and js for highlight.js
+            if self.code_highlight:
+                tag.link(rel="stylesheet",
+                         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css")
+                tag.script(
+                    src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js")
+                tag.script(raw(
+                    """
+                    hljs.initHighlightingOnLoad();
+                    """
+                ))
+
             # search highlight color control
             tag.style('span.highlight{background:  %s;}' %
                       highlight_color)
@@ -144,7 +176,7 @@ class ReportWriter:
                                 with tag.ul(_class="dropdown-menu",
                                             aria_labelledby="dropdownMenuButton", id="ddmenu"):
                                     # input box for filtering dropdown
-                                    tag.input(_class="form-control", id="ddfilter",
+                                    tag.input(_class="form-control-sm", id="ddfilter",
                                               type="text", placeholder="Filter..")
                         # highlight box form starts here
                         with tag.li(_class="nav-item"):
@@ -157,15 +189,22 @@ class ReportWriter:
 
         return str(report_head)
 
-    def report_section(self, title, content, pre_tag=True, tag_color='default'):
+    def report_section(self, title, content, pre_tag=True, tag_color='default',
+                       title_bg=True):
         """
         This form the main body of the report
         :title string: The h1/header title of the section
         :pre_tag bool: Default is True and treats content as monospaced. Set to False to use p tag
         :content string: The content for this section
         :tag_color str: The severity color of the section.
+        :title_bg bool: Controls if the header background or text is colored. Default is True
+                           and lets background color.
         :return: a jumbotron object
         """
+        if title_bg:
+            color = 'bg'
+        else:
+            color = 'text'
         if tag_color not in ['primary', 'secondary', 'success',
                              'danger', 'warning', 'info', 'default']:
             raise NotValidTag, 'Valid tags are primary secondary success danger warning info'
@@ -175,8 +214,9 @@ class ReportWriter:
         # creates the jumbotron. User dictates if it is pre or p tag
         with tag.div(_class="jumbotron container context",
                      style="padding-bottom:3; padding-top:40") as r:  # padding mods
-            tag.h1(title, _class="bg-%s" %
-                                 tag_color, id="%s" % title.replace(' ', ''))
+            # can change the text color, or the background color
+            tag.h1(title, _class="%s-%s" %
+                                 (color, tag_color), id="%s" % title.replace(' ', ''))
             if pre_tag:
                 tag.pre(content)
             else:
@@ -237,6 +277,51 @@ class ReportWriter:
                         tag.span("Next", _class="sr-only")
         return str(i)
 
+    def report_asciinema(self, asciinema_link, title=''):
+        """
+        Section creates a jumbotron to house an asciinema
+        :asciinema_link str: Link to asciinema. Could be http/s or local files
+        :title str: Set the title of the asciinema. If set, it will create its own section.
+        """
+        logging.warning('This method only works with asciinema links because of the way\n \
+            browsers enforce CORS')
+        # checks to see if asciinema has been intialized
+        if not self.asciinema:
+            raise ObjectNotInitiated, 'To integrate asciinema, set asciinema=True in ReportWriter'
+
+        # TODO: write a check here that validates the asciinema url
+
+        # hacky way to bypass the CORS problem
+        try:
+            url = urllib2.urlopen('%s.json' % asciinema_link).geturl()
+        except urllib2.URLError:
+            logging.warning(
+                'Need internet to get the proper url for %s' % asciinema_link)
+
+        # adjusts section padding if h1 is to be set or not
+        if title != '':
+            style = "padding-bottom:3; padding-top:40"
+        else:
+            style = "padding:0; margin-top:-2rem;"
+
+        with tag.div(_class="jumbotron jumbomargin container",
+                     style=style) as a:
+            if title != '':
+                tag.h1(title, id="%s" % title.replace(' ', ''))
+            raw('<asciinema-player src="%s"></asciinema-player>' % url)
+            tag.script(
+                src="https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/2.4.1/asciinema-player.min.js")
+        return str(a)
+
+    def report_code_section(self, title, code):
+        if not self.code_highlight:
+            raise ObjectNotInitiated, 'To integrate code highlighting, set code_highlight=True in ReportWriter'
+        with tag.div(_class="jumbotron container context",
+                     style="padding-bottom:3; padding-top:40; max-height: 70%; overflow: auto;") as c:  # padding mods
+            tag.h1(title, id="%s" % title.replace(' ', ''))
+            tag.pre().add(tag.code(code))
+        return str(c)
+
     def report_notes(self, content):
         """
         Simple method to added some center aligned text.
@@ -250,7 +335,7 @@ class ReportWriter:
         """
         Returns the footer object. Supports social media
         :message: A message in the footer
-        :kwargs: Supported paramters are email, linkedin, github and twitter 
+        :kwargs: Supported paramters are email, linkedin, github and twitter
         """
         # creates the footer
         with tag.footer(_class="page-footer") as footer:
@@ -289,5 +374,5 @@ class ReportWriter:
 # TODO: option to add captions to images
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: something that will allow user to loop and add content
-# TODO: integrate components of mark.js
+# TODO: integrate components of mark.js. Somehow to filter inside a section
 # TODO: make header method mandatory
