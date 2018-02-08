@@ -36,7 +36,7 @@ Helper
 ------
 
 .. automodule:: reportng.rnghelpers
-:members:
+    :members:
 
 
 .. toctree::
