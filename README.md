@@ -11,11 +11,11 @@ Currently, reportng supports the following:
 
 ## Example
 ```python
-from reportng import reportng
+from reportng import ReportWriter
 from subprocess import Popen, PIPE
 import requests
 
-r = reportng.ReportWriter(report_name='Demo report', brand='securisec')
+r = ReportWriter(report_name='Demo report', brand='securisec')
 report = r.report_header()
 
 # Multiline support
