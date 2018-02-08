@@ -1,6 +1,6 @@
 <head>
     <title>demo file</title>
-    <!--Created using easyreport by securisec-->
+    <!--Created using reportng by securisec-->
     <meta charset="utf-8" content="width=device-width, initial-scale=1" name="viewport">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -45,6 +45,13 @@
     </script>
     <link href="https://bootswatch.com/4/lux/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/2.4.1/asciinema-player.min.css" rel="stylesheet"
+          type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
     <style>span.highlight {
         background: #f1c40f;
     }</style>
@@ -63,7 +70,7 @@
                                 id="dropdownMenuButton" type="button">sections
                         </button>
                         <ul aria:labelledby="dropdownMenuButton" class="dropdown-menu" id="ddmenu">
-                            <input class="form-control" id="ddfilter" placeholder="Filter.." type="text">
+                            <input class="form-control-sm" id="ddfilter" placeholder="Filter.." type="text">
                         </ul>
                     </div>
                 </li>
@@ -80,8 +87,18 @@
         </div>
     </nav>
 </head>
+<div class="jumbotron container context" style="padding-bottom:3; padding-top:40; max-height: 70%; overflow: auto;">
+    <h1 id="someJScode">some JS code</h1>
+    <pre><code>
+$(document).ready(function() {
+  $('pre code').each(function(i, block) {
+    hljs.highlightBlock(block);
+  });
+});
+</code></pre>
+</div>
 <div class="jumbotron container context" style="padding-bottom:3; padding-top:40">
-    <h1 class="bg-info" id="aaa">aaa</h1>
+    <h1 class="bg-info" id="Multilinetext">Multi line text</h1>
     <pre>fsfsdfsd
 fasfdds
 fdsfsfsd
@@ -92,30 +109,23 @@ Malmö
 你好
 </pre>
 </div>
-<div class="container text-center" style="margin-top:-30;">
-    <p>hahahahahlol</p>
-</div>
 <div class="jumbotron jumbomargin container" style="padding:0; margin-top:-2rem;">
     <div class="carousel slide" data-interval="false" data-ride="carousel" id="carousel_controls">
         <ol class="carousel-indicators">
             <li class="active" data-slide-to="0" data-target="#carousel_controls"></li>
             <li data-slide-to="1" data-target="#carousel_controls"></li>
-            <li data-slide-to="2" data-target="#carousel_controls"></li>
         </ol>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <a href="1.jpg" target="_blank">
-                    <img class="img-fluid img-thumbnail rounded mx-auto d-block" src="1.jpg">
+                <a href="https://static.pexels.com/photos/36764/marguerite-daisy-beautiful-beauty.jpg" target="_blank">
+                    <img class="img-fluid img-thumbnail rounded mx-auto d-block"
+                         src="https://static.pexels.com/photos/36764/marguerite-daisy-beautiful-beauty.jpg">
                 </a>
             </div>
             <div class="carousel-item">
-                <a href="1.png" target="_blank">
-                    <img class="img-fluid img-thumbnail rounded mx-auto d-block" src="1.png">
-                </a>
-            </div>
-            <div class="carousel-item">
-                <a href="2.png" target="_blank">
-                    <img class="img-fluid img-thumbnail rounded mx-auto d-block" src="2.png">
+                <a href="https://cdn.wallpapersafari.com/4/56/CETz3X.jpg" target="_blank">
+                    <img class="img-fluid img-thumbnail rounded mx-auto d-block"
+                         src="https://cdn.wallpapersafari.com/4/56/CETz3X.jpg">
                 </a>
             </div>
             <a class="carousel-control-prev" data-slide="prev" href="#carousel_controls" role="button">
@@ -132,8 +142,14 @@ Malmö
 <div class="container text-center" style="margin-top:-30;">
     <p>some details about picture</p>
 </div>
+<div class="jumbotron jumbomargin container" style="padding-bottom:3; padding-top:40">
+    <h1 id="asciinemavideo">asciinema video</h1>
+    <asciinema-player
+            src="https://s3-eu-west-1.amazonaws.com/asciinema-bb-eu/uploads/asciicast/file/117928/asciicast.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAI2DOCAQ34YNJM3GA%2F20180208%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20180208T030713Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=8a626e016139e27d2553711e997f22493c6cb0476321b13a3b8b3483829d2da8"></asciinema-player>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/2.4.1/asciinema-player.min.js"></script>
+</div>
 <div class="jumbotron container context" style="padding-bottom:3; padding-top:40">
-    <h1 class="bg-danger" id="radare2output">radare2 output</h1>
+    <h1 class="text-danger" id="radare2output">radare2 output</h1>
     <pre>;-- entry0:
             ;-- func.1000011e0:
             ;-- rip:
@@ -170,14 +186,22 @@ securisecsecurisecsecurisecsecurisecsecurisecsecurisecsecurisecsecurisec
 securisecsecurisecsecurisecsecurisecsecurisecsecurisecsecurisecsecurisecsecurisec</pre>
 </div>
 <div class="jumbotron container context" style="padding-bottom:3; padding-top:40">
-    <h1 class="bg-default" id="ccc">ccc</h1>
+    <h1 class="text-warning" id="lsoutput">ls output</h1>
+    <pre>bin
+include
+lib
+pip-selfcheck.json
+</pre>
+</div>
+<div class="jumbotron container context" style="padding-bottom:3; padding-top:40">
+    <h1 class="text-default" id="ccc">ccc</h1>
     <p>new other text</p>
 </div>
 <div class="container text-center" style="margin-top:-30;">
     <p>hahahahaha</p>
 </div>
 <div class="jumbotron container context" style="padding-bottom:3; padding-top:40">
-    <h1 class="bg-default" id="somethingelse">some thing else</h1>
+    <h1 class="text-secondary" id="somethingelse">some thing else</h1>
     <p>some other content</p>
 </div>
 <footer class="page-footer">
