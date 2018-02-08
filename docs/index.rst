@@ -34,6 +34,7 @@ Documentation
 
 Helper
 ------
+
 .. automodule:: reportng.rnghelpers
 :members:
 
