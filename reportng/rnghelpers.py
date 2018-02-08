@@ -5,8 +5,7 @@ Helper module for reportng
 
 class js_css:
     """
-    This class controls values that can be modified by the user and can be pointed to local files
-    to host them locally
+    These class constants controls values that can be modified by the user and can be pointed to local files to host them locally
     """
 
     #: jquery: Constant that handles jqery.min.js
