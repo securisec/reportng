@@ -5,9 +5,15 @@ Currently, reportng supports the following:
 
 - Search and highlight
 - Self populating dropdown menu for report sections.
+- Code sections with lexing
+- Asciinema integration
+- Image carousels
 
 ## Installation
 > `pip install -U reportng`
+
+## Documentation
+[Documentation is on readthedocs](http://reportng.readthedocs.io/en/latest/)
 
 ## Example
 ```python

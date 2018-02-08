@@ -8,7 +8,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>reportng &mdash; reportng 0.24 documentation</title>
+    <title>reportng &mdash; reportng 0.25 documentation</title>
 
 
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css"/>
@@ -17,7 +17,7 @@
     <link rel="index" title="Index"
           href="genindex.html"/>
     <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="reportng 0.24 documentation" href="#"/>
+    <link rel="top" title="reportng 0.25 documentation" href="#"/>
 
 
     <script src="_static/js/modernizr.min.js"></script>
@@ -42,7 +42,7 @@
 
 
                 <div class="version">
-                    0.24
+                    0.25
                 </div>
 
 
@@ -65,8 +65,10 @@
                     <ul>
                         <li><a class="reference internal" href="#">reportng</a>
                             <ul>
+                                <li><a class="reference internal" href="#social">Social</a></li>
                                 <li><a class="reference internal" href="#installation">Installation</a></li>
                                 <li><a class="reference internal" href="#module-reportng">Documentation</a></li>
+                                <li><a class="reference internal" href="#module-reportng.rnghelpers">Helper</a></li>
                             </ul>
                         </li>
                         <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
@@ -135,6 +137,16 @@
                                 <li>Create a report of debugging</li>
                                 <li>etc…</li>
                             </ul>
+                            <div class="section" id="social">
+                                <h2>Social<a class="headerlink" href="#social" title="Permalink to this headline">¶</a>
+                                </h2>
+                                <ul class="simple">
+                                    <li><a class="reference external" href="https://twitter.com/securisec/">Twitter</a>
+                                    </li>
+                                    <li><a class="reference external" href="https://github.com/securisec/">Github</a>
+                                    </li>
+                                </ul>
+                            </div>
                             <div class="section" id="installation">
                                 <h2>Installation<a class="headerlink" href="#installation"
                                                    title="Permalink to this headline">¶</a></h2>
@@ -354,6 +366,37 @@
                                         </dl>
 
                                         <dl class="method">
+                                            <dt id="reportng.ReportWriter.report_save">
+                                                <code class="descname">report_save</code><span
+                                                    class="sig-paren">(</span><em>all_objects</em>, <em>path</em><span
+                                                    class="sig-paren">)</span><a class="headerlink"
+                                                                                 href="#reportng.ReportWriter.report_save"
+                                                                                 title="Permalink to this definition">¶</a>
+                                            </dt>
+                                            <dd><p>Saves the html file to disk</p>
+                                                <table class="docutils field-list" frame="void" rules="none">
+                                                    <col class="field-name"/>
+                                                    <col class="field-body"/>
+                                                    <tbody valign="top">
+                                                    <tr class="field-odd field">
+                                                        <th class="field-name">Parameters:</th>
+                                                        <td class="field-body">
+                                                            <ul class="first last simple">
+                                                                <li><strong>all_objects</strong> (<em>str</em>) – The
+                                                                    tally of all the objects
+                                                                </li>
+                                                                <li><strong>path</strong> (<em>str</em>) – path to save
+                                                                    the file
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="method">
                                             <dt id="reportng.ReportWriter.report_section">
                                                 <code class="descname">report_section</code><span
                                                     class="sig-paren">(</span><em>title</em>, <em>content</em>, <em>pre_tag=True</em>,
@@ -395,37 +438,6 @@
                                                         <th class="field-name">Returns:</th>
                                                         <td class="field-body"><p class="first last">a jumbotron
                                                             object</p>
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </dd>
-                                        </dl>
-
-                                        <dl class="method">
-                                            <dt id="reportng.ReportWriter.save_report">
-                                                <code class="descname">save_report</code><span
-                                                    class="sig-paren">(</span><em>all_objects</em>, <em>path</em><span
-                                                    class="sig-paren">)</span><a class="headerlink"
-                                                                                 href="#reportng.ReportWriter.save_report"
-                                                                                 title="Permalink to this definition">¶</a>
-                                            </dt>
-                                            <dd><p>Saves the html file to disk</p>
-                                                <table class="docutils field-list" frame="void" rules="none">
-                                                    <col class="field-name"/>
-                                                    <col class="field-body"/>
-                                                    <tbody valign="top">
-                                                    <tr class="field-odd field">
-                                                        <th class="field-name">Parameters:</th>
-                                                        <td class="field-body">
-                                                            <ul class="first last simple">
-                                                                <li><strong>all_objects</strong> (<em>str</em>) – The
-                                                                    tally of all the objects
-                                                                </li>
-                                                                <li><strong>path</strong> (<em>str</em>) – path to save
-                                                                    the file
-                                                                </li>
-                                                            </ul>
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -484,6 +496,141 @@
                                     </dd>
                                 </dl>
 
+                            </div>
+                            <div class="section" id="module-reportng.rnghelpers">
+                                <span id="helper"></span>
+                                <h2>Helper<a class="headerlink" href="#module-reportng.rnghelpers"
+                                             title="Permalink to this headline">¶</a></h2>
+                                <p>Helper module for reportng</p>
+                                <dl class="class">
+                                    <dt id="reportng.rnghelpers.JS">
+                                        <em class="property">class </em><code
+                                            class="descclassname">reportng.rnghelpers.</code><code
+                                            class="descname">JS</code><a class="headerlink"
+                                                                         href="#reportng.rnghelpers.JS"
+                                                                         title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Class that handles all the custom JS code. It is best not to modify any of
+                                        this code.</p>
+                                    </dd>
+                                </dl>
+
+                                <dl class="exception">
+                                    <dt id="reportng.rnghelpers.NotValidTag">
+                                        <em class="property">exception </em><code class="descclassname">reportng.rnghelpers.</code><code
+                                            class="descname">NotValidTag</code><a class="headerlink"
+                                                                                  href="#reportng.rnghelpers.NotValidTag"
+                                                                                  title="Permalink to this definition">¶</a>
+                                    </dt>
+                                    <dd><p>Exception to handle invalid tag for background color control</p>
+                                    </dd>
+                                </dl>
+
+                                <dl class="exception">
+                                    <dt id="reportng.rnghelpers.ObjectNotInitiated">
+                                        <em class="property">exception </em><code class="descclassname">reportng.rnghelpers.</code><code
+                                            class="descname">ObjectNotInitiated</code><a class="headerlink"
+                                                                                         href="#reportng.rnghelpers.ObjectNotInitiated"
+                                                                                         title="Permalink to this definition">¶</a>
+                                    </dt>
+                                    <dd><p>Exception when a method is called but not initiated</p>
+                                    </dd>
+                                </dl>
+
+                                <dl class="class">
+                                    <dt id="reportng.rnghelpers.js_css">
+                                        <em class="property">class </em><code
+                                            class="descclassname">reportng.rnghelpers.</code><code class="descname">js_css</code><a
+                                            class="headerlink" href="#reportng.rnghelpers.js_css"
+                                            title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>This class controls values that can be modified by the user and can be
+                                        pointed to local files
+                                        to host them locally</p>
+                                        <dl class="attribute">
+                                            <dt id="reportng.rnghelpers.js_css.asciinema_css">
+                                                <code class="descname">asciinema_css</code><em class="property"> =
+                                                'https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/2.4.1/asciinema-player.min.css'</em><a
+                                                    class="headerlink" href="#reportng.rnghelpers.js_css.asciinema_css"
+                                                    title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>asciinema_css: Constant that handles asciinema-player.min.js</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="attribute">
+                                            <dt id="reportng.rnghelpers.js_css.asciinema_js">
+                                                <code class="descname">asciinema_js</code><em class="property"> =
+                                                'https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/2.4.1/asciinema-player.min.js'</em><a
+                                                    class="headerlink" href="#reportng.rnghelpers.js_css.asciinema_js"
+                                                    title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>asciinema_js: Constant that handles asciinema-player.min.js</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="attribute">
+                                            <dt id="reportng.rnghelpers.js_css.bs4_js">
+                                                <code class="descname">bs4_js</code><em class="property"> =
+                                                'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'</em><a
+                                                    class="headerlink" href="#reportng.rnghelpers.js_css.bs4_js"
+                                                    title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>bs4_js: Constant that handles bootstrap.min.js</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="attribute">
+                                            <dt id="reportng.rnghelpers.js_css.font_awesome">
+                                                <code class="descname">font_awesome</code><em class="property"> =
+                                                'https://use.fontawesome.com/releases/v5.0.6/css/all.css'</em><a
+                                                    class="headerlink" href="#reportng.rnghelpers.js_css.font_awesome"
+                                                    title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>font_awesome: Constant that handles font awesomes all.min.js</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="attribute">
+                                            <dt id="reportng.rnghelpers.js_css.highlight_custom">
+                                                <code class="descname">highlight_custom</code><em class="property"> =
+                                                'https://cdn.rawgit.com/securisec/misc_things/f8d2b846/highlight.js'</em><a
+                                                    class="headerlink"
+                                                    href="#reportng.rnghelpers.js_css.highlight_custom"
+                                                    title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>highlight_custom: Constant that handles the custom js that aids in
+                                                highlighting</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="attribute">
+                                            <dt id="reportng.rnghelpers.js_css.highlightjs_css">
+                                                <code class="descname">highlightjs_css</code><em class="property"> =
+                                                'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css'</em><a
+                                                    class="headerlink"
+                                                    href="#reportng.rnghelpers.js_css.highlightjs_css"
+                                                    title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>highlighjs_css: Constant that handles highlight.js default.min.js</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="attribute">
+                                            <dt id="reportng.rnghelpers.js_css.highlightjs_js">
+                                                <code class="descname">highlightjs_js</code><em class="property"> =
+                                                'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js'</em><a
+                                                    class="headerlink" href="#reportng.rnghelpers.js_css.highlightjs_js"
+                                                    title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>highlight_js: Constant that handles highlight.min.js</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="attribute">
+                                            <dt id="reportng.rnghelpers.js_css.jquery">
+                                                <code class="descname">jquery</code><em class="property"> =
+                                                'https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'</em><a
+                                                    class="headerlink" href="#reportng.rnghelpers.js_css.jquery"
+                                                    title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>jquery: Constant that handles jqery.min.js</p>
+                                            </dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
                                 <div class="toctree-wrapper compound">
                                 </div>
                             </div>
@@ -535,7 +682,7 @@
 <script type="text/javascript">
     var DOCUMENTATION_OPTIONS = {
         URL_ROOT: './',
-        VERSION: '0.24',
+        VERSION: '0.25',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE: true,

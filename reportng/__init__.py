@@ -6,6 +6,7 @@ Usage is simple. Follows header, body..., footer structure
 import os
 import logging
 import urllib2
+import rnghelpers as rng
 
 try:
     import dominate
@@ -21,15 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.24'
-
-
-class NotValidTag(Exception):
-    pass
-
-
-class ObjectNotInitiated(Exception):
-    pass
+__version__ = '0.25'
 
 
 class ReportWriter:
@@ -71,85 +64,53 @@ class ReportWriter:
             tag.comment('Created using reportng by securisec')
             tag.meta(charset="utf-8", name="viewport",
                      content="width=device-width, initial-scale=1")
-            tag.script(
-                src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js")
-            tag.script(
-                src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js")
-            tag.script(
-                src="https://cdn.rawgit.com/securisec/misc_things/f8d2b846/highlight.js")
-            # constructing this way to avoid loading un needed js and css
+            # main style components
+            tag.script(src=rng.js_css.jquery)
+            tag.script(src=rng.js_css.bs4_js)
+            tag.script(src=rng.js_css.highlight_custom)
+
             # JS for search highlighting
+            tag.comment('JS to highlight onkeyup')
             tag.script(raw(
-                """
-                function clickHighlight() {
-                    document.getElementById("performbutton").click();
-                }
-                """
+                rng.JS.highlight_js
             ))
+
             # JS to populate the navbar dropdown
             tag.comment('JS to populate the navbar dropdown')
             tag.script(raw(
-                """
-                function populateDropdown() {
-                    var headings = $('h1')
-                    var select = document.getElementById("ddmenu");
-                    for (var i = 0; i < headings.length; i++){
-                        var a = document.createElement("a")
-                        a.setAttribute("class", "dropdown-item " + headings[i].className);
-                        a.setAttribute("href", "#" + headings[i].id)
-                        a.innerHTML = headings[i].innerHTML;
-                        select.appendChild(a);
-                    }
-                }
-                window.onload = populateDropdown
-                """
+                rng.JS.populate_navbar_onload
             ))
+
             # script that allows for smooth scrolling and adds padding for navbar
-            tag.comment('script that allows for smooth scrolling and adds padding for navbar')
+            tag.comment(
+                'script that allows for smooth scrolling and adds padding for navbar')
             tag.script(raw(
-                """
-                $(document).on('click', 'a[href^="#"]', function (event) {
-                    event.preventDefault();
-                    $('html, body').animate({
-                        scrollTop: $($.attr(this, 'href')).offset().top-150
-                    }, 500);
-                });
-                """
+                rng.JS.smoothscroll_navbar_pad
             ))
+
             # js to filter in the dropdown menu
             tag.comment('js to filter in the dropdown menu')
             tag.script(raw(
-                """
-                $(document).ready(function(){
-                $("#ddfilter").on("keyup", function() {
-                    var value = $(this).val().toLowerCase();
-                    $(".dropdown-menu a").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                    });
-                });
-                });
-                """
+                rng.JS.dropdown_filter
             ))
-            # style sheets
+
+            # bootswatch style sheets
             tag.comment('style sheets')
             tag.link(rel="stylesheet", type="text/css",
                      href="https://bootswatch.com/4/%s/bootstrap.min.css" % theme)
-            tag.link(href="https://use.fontawesome.com/releases/v5.0.6/css/all.css",
-                     rel="stylesheet")
+            tag.link(href=rng.js_css.font_awesome, rel="stylesheet")
 
+            # constructing this way to avoid loading un needed js and css
             # css for asciinema
             if self.asciinema:
                 tag.comment('css for asciinema')
-                tag.link(rel="stylesheet", type="text/css",
-                         href="https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/2.4.1/asciinema-player.min.css")
+                tag.link(rel="stylesheet", type="text/css", href=rng.js_css.asciinema_css)
 
             # css and js for highlight.js
             if self.code_highlight:
                 tag.comment('css and js for highlight.js')
-                tag.link(rel="stylesheet",
-                         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css")
-                tag.script(
-                    src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js")
+                tag.link(rel="stylesheet", href=rng.js_css.highlightjs_css)
+                tag.script(src=rng.js_css.highlightjs_js)
                 tag.script(raw(
                     """
                     hljs.initHighlightingOnLoad();
@@ -217,7 +178,7 @@ class ReportWriter:
             color = 'text'
         if tag_color not in ['primary', 'secondary', 'success',
                              'danger', 'warning', 'info', 'default']:
-            raise NotValidTag, 'Valid tags are primary secondary success danger warning info'
+            raise rng.NotValidTag, 'Valid tags are primary secondary success danger warning info'
 
         # create a space between body jumbotrons
         tag.br()
@@ -298,7 +259,7 @@ class ReportWriter:
             browsers enforce CORS')
         # checks to see if asciinema has been intialized
         if not self.asciinema:
-            raise ObjectNotInitiated, 'To integrate asciinema, set asciinema=True in ReportWriter'
+            raise rng.ObjectNotInitiated, 'To integrate asciinema, set asciinema=True in ReportWriter'
 
         # TODO: write a check here that validates the asciinema url
 
@@ -321,7 +282,7 @@ class ReportWriter:
                 tag.h1(title, id="%s" % title.replace(' ', ''))
             raw('<asciinema-player src="%s"></asciinema-player>' % url)
             tag.script(
-                src="https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/2.4.1/asciinema-player.min.js")
+                src=rng.js_css.asciinema_js)
         return str(a)
 
     def report_code_section(self, title, code):
@@ -333,7 +294,7 @@ class ReportWriter:
         :return: a string code section
         """
         if not self.code_highlight:
-            raise ObjectNotInitiated, 'To integrate code highlighting, set code_highlight=True in ReportWriter'
+            raise rng.ObjectNotInitiated, 'To integrate code highlighting, set code_highlight=True in ReportWriter'
         with tag.div(_class="jumbotron container context",
                      style="padding-bottom:3; padding-top:40; max-height: 70%; overflow: auto;") as c:  # padding mods
             tag.h1(title, id="%s" % title.replace(' ', ''))
@@ -381,7 +342,7 @@ class ReportWriter:
 
         return str(footer)
 
-    def save_report(self, all_objects, path):
+    def report_save(self, all_objects, path):
         """
         Saves the html file to disk
 
@@ -397,4 +358,3 @@ class ReportWriter:
 # TODO: something that will allow user to loop and add content
 # TODO: integrate components of mark.js. Somehow to filter inside a section
 # TODO: make header method mandatory
-# TODO: create a new class to handle all the hardcoded js and css urls
