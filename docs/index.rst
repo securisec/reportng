@@ -32,8 +32,8 @@ Documentation
     
     .. automethod:: __init__
 
-Helper
-------
+Helpers
+-------
 
 .. automodule:: reportng.rnghelpers
     :members:

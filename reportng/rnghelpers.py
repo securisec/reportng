@@ -3,9 +3,9 @@ Helper module for reportng
 """
 
 
-class js_css:
+class JSCSS:
     """
-    These class constants controls values that can be modified by the user and can be pointed to local files to host them locally
+    This class controls constants that can be modified by the user and can be pointed to local files to host them locally
     """
 
     #: jquery: Constant that handles jqery.min.js
@@ -26,7 +26,7 @@ class js_css:
     highlightjs_js = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"
 
 
-class JS:
+class JSCustom:
     """
     Class that handles all the custom JS code. It is best not to modify any of this code.
     """

@@ -65,52 +65,53 @@ class ReportWriter:
             tag.meta(charset="utf-8", name="viewport",
                      content="width=device-width, initial-scale=1")
             # main style components
-            tag.script(src=rng.js_css.jquery)
-            tag.script(src=rng.js_css.bs4_js)
-            tag.script(src=rng.js_css.highlight_custom)
+            tag.script(src=rng.JSCSS.jquery)
+            tag.script(src=rng.JSCSS.bs4_js)
+            tag.script(src=rng.JSCSS.highlight_custom)
 
             # JS for search highlighting
             tag.comment('JS to highlight onkeyup')
             tag.script(raw(
-                rng.JS.highlight_js
+                rng.JSCustom.highlight_js
             ))
 
             # JS to populate the navbar dropdown
             tag.comment('JS to populate the navbar dropdown')
             tag.script(raw(
-                rng.JS.populate_navbar_onload
+                rng.JSCustom.populate_navbar_onload
             ))
 
             # script that allows for smooth scrolling and adds padding for navbar
             tag.comment(
                 'script that allows for smooth scrolling and adds padding for navbar')
             tag.script(raw(
-                rng.JS.smoothscroll_navbar_pad
+                rng.JSCustom.smoothscroll_navbar_pad
             ))
 
             # js to filter in the dropdown menu
             tag.comment('js to filter in the dropdown menu')
             tag.script(raw(
-                rng.JS.dropdown_filter
+                rng.JSCustom.dropdown_filter
             ))
 
             # bootswatch style sheets
             tag.comment('style sheets')
             tag.link(rel="stylesheet", type="text/css",
                      href="https://bootswatch.com/4/%s/bootstrap.min.css" % theme)
-            tag.link(href=rng.js_css.font_awesome, rel="stylesheet")
+            tag.link(href=rng.JSCSS.font_awesome, rel="stylesheet")
 
             # constructing this way to avoid loading un needed js and css
             # css for asciinema
             if self.asciinema:
                 tag.comment('css for asciinema')
-                tag.link(rel="stylesheet", type="text/css", href=rng.js_css.asciinema_css)
+                tag.link(rel="stylesheet", type="text/css",
+                         href=rng.JSCSS.asciinema_css)
 
             # css and js for highlight.js
             if self.code_highlight:
                 tag.comment('css and js for highlight.js')
-                tag.link(rel="stylesheet", href=rng.js_css.highlightjs_css)
-                tag.script(src=rng.js_css.highlightjs_js)
+                tag.link(rel="stylesheet", href=rng.JSCSS.highlightjs_css)
+                tag.script(src=rng.JSCSS.highlightjs_js)
                 tag.script(raw(
                     """
                     hljs.initHighlightingOnLoad();
@@ -282,7 +283,7 @@ class ReportWriter:
                 tag.h1(title, id="%s" % title.replace(' ', ''))
             raw('<asciinema-player src="%s"></asciinema-player>' % url)
             tag.script(
-                src=rng.js_css.asciinema_js)
+                src=rng.JSCSS.asciinema_js)
         return str(a)
 
     def report_code_section(self, title, code):
@@ -296,9 +297,10 @@ class ReportWriter:
         if not self.code_highlight:
             raise rng.ObjectNotInitiated, 'To integrate code highlighting, set code_highlight=True in ReportWriter'
         with tag.div(_class="jumbotron container context",
-                     style="padding-bottom:3; padding-top:40; max-height: 70%; overflow: auto;") as c:  # padding mods
+                     style="padding-bottom:3; padding-top:40;") as c:  # padding mods
             tag.h1(title, id="%s" % title.replace(' ', ''))
-            tag.pre().add(tag.code(code))
+            with tag.div(_class="container", style=" max-height: 70%; overflow: auto; margin-bottom: 20"):
+                tag.pre().add(tag.code(code))
         return str(c)
 
     def report_notes(self, content):
