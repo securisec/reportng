@@ -8,6 +8,7 @@ using modern browsers.
 import os
 import logging
 import urllib2
+from collections import OrderedDict
 import rnghelpers as rng
 
 import dominate
@@ -21,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.27'
+__version__ = '0.28'
 
 
 class ReportWriter:
@@ -177,6 +178,7 @@ class ReportWriter:
         :param str tag_color: The severity color of the section.
         :param bool title_bg: Controls if the header background or text is colored. Default is True and lets background color.
         :return: a jumbotron object
+        :raises NotValidTag: Raises exception if a valid tag is not used
 
         Example show how to use a red title with only colored text
             >>> r += report.report_section('some title', content, tag_color='warning', titble_bg=False)
@@ -202,14 +204,20 @@ class ReportWriter:
                 tag.p(content)
         return str(rng.HelperFunctions.convert_to_string(r))
 
-    def report_image_carousel(self, *args):
+    def report_image_carousel(self, *args, **kwargs):
         """
-        :param list args: A list of image paths
+        :param args args: A list of image paths
+        :param kwargs kwargs: Kwargs handle image captions and must be in the same order as args
         :return: image jumbotron carousel container
+        :raises IndexError: If the number of kwargs is not equal to args
 
         Example:
-            >>> r += report.report_image_carousel('example.jpg', 'example1.png')
+            >>> r += report.report_image_carousel('example.jpg', 'example1.png',
+            >>>                                 img1_caption='Beautiful', img2_caption='Wonderful')
         """
+        # dict order for image captions
+        if kwargs:
+            ordered_kwargs = OrderedDict(kwargs).values()
         # create jumbotron container
         with tag.div(_class="jumbotron jumbomargin container",
                      style="padding:0; margin-top:-2rem;") as i:
@@ -226,12 +234,22 @@ class ReportWriter:
                                     tag.a(href=image, target="_blank")):
                                 tag.img(
                                     src=image, _class="img-fluid img-thumbnail rounded mx-auto d-block")
+                                if kwargs:
+                                    tag.div(_class="carousel-caption").add(
+                                        tag.p(ordered_kwargs[index_num]))
                         # images 2+
                         else:
                             with tag.div(_class="carousel-item").add(
                                     tag.a(href=image, target="_blank")):
                                 tag.img(
                                     src=image, _class="img-fluid img-thumbnail rounded mx-auto d-block")
+                                try:
+                                    if kwargs:
+                                        tag.div(_class="carousel-caption").add(
+                                            tag.p(ordered_kwargs[index_num]))
+                                except IndexError:
+                                    logging.exception(
+                                        'All captions needs to be set')
                     # carousel button
                     with tag.a(_class="carousel-control-prev", href="#carousel_controls",
                                role="button", data_slide="prev"):
@@ -251,6 +269,7 @@ class ReportWriter:
 
         :param str asciinema_link: Link to asciinema. Could be http/s or local files
         :param str title: Set the title of the asciinema. If set, it will create its own section. If not, it will append to previous section
+        :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
 
         Example:
             >>> r += report.report_asciinema('https://asciinema.org/a/XvEb7StzQ3C1BAAlvn9CDvqLR', title='asciinema')
@@ -292,6 +311,7 @@ class ReportWriter:
         :param str title: Title of the code section.
         :param str code: Code. Use pre and code tags so multiline code is fine
         :return: a string code section
+        :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
 
         Example of how to get code from file:
             >>> with open('somefile.py', 'r') as f:
@@ -326,6 +346,10 @@ class ReportWriter:
 
         :param tuple args: Tuples that creates cards. The first value of the tuple is used to color the card, second value is the header for the card and the third is passed to a p tag for content
         :param bool kwargs: Set the value of ``border_only=True`` to get only borders. Default is false
+        :param bool kwargs: Set section=True to append the cards section to the preceding section
+        :raise TypeError: Raises TypeError if args is not a tuple
+        :raise TooManyValues: Raises exception when the number of values in tuple is not 3
+
 
         Example:
             >>> r += report_cards(('primary', 'header1', 'some text'),
@@ -342,13 +366,19 @@ class ReportWriter:
         else:
             border = False
 
+        # control if stick to previous section or not
+        if kwargs.has_key('section'):
+            style = "padding:3; margin-top:-2rem;"
+        else:
+            style = "padding-bottom:3; padding-top:40;"
+
         with tag.div(_class="jumbotron container context",
-                     style="padding-bottom:3; padding-top:40;") as c:  # padding mods
+                     style=style) as c:  # padding mods
             with tag.div(_class="row justify-content-center"):
                 for i in range(len(args)):
                     # Checks to make sure corrent number of values in tuple
                     if len(args[i]) != 3:
-                        raise rng.TooManyValues, 'Only pass two values to each tuple'
+                        raise rng.TooManyValues, 'Only pass three values to each tuple'
                     k = args[i][0]
                     h = args[i][1]
                     v = args[i][2]
@@ -441,8 +471,8 @@ class DownloadAssets:
 
 
 # TODO: add a brand image that is resized with the navbar
-# TODO: option to add captions to images
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: something that will allow user to loop and add content
 # TODO: integrate components of mark.js. Somehow to filter inside a section
 # TODO: make header method mandatory
+# TODO: add regex support for highlight

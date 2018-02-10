@@ -22,7 +22,7 @@ Social
 ------
 
 - `Twitter <https://twitter.com/securisec/>`_
-- `Github <https://github.com/securisec/>`_
+- `Github <https://github.com/securisec/reportng>`_
 
 Installation
 ------------

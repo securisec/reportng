@@ -7,7 +7,7 @@ Currently, reportng supports the following:
 - Self populating dropdown menu for report sections.
 - Code sections with lexing
 - Asciinema integration
-- Image carousels
+- Image carousels with captions
 - Stackable cards
 - Social integrated footers
 

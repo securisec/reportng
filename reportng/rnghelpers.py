@@ -129,7 +129,7 @@ class HelperFunctions:
     def make_cards(b_only, k, h, v):
         if k not in JSCSS.valid_tags:
             raise NotValidTag, '\n\n%s is not a valid tag. \nChoose one of the following: \n%s' % (
-            k, '\n'.join([x for x in JSCSS.valid_tags]))
+                k, '\n'.join([x for x in JSCSS.valid_tags]))
         # checks bool and determines styling
         if b_only:
             style = 'border'
