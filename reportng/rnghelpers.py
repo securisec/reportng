@@ -28,6 +28,10 @@ class JSCSS:
     #: highlight_js: Constant that handles highlight.min.js
     highlightjs_js = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"
 
+    #: Valid options for colors/cards etc
+    valid_tags = ['primary', 'secondary', 'success', 'danger',
+                  'warning', 'info', 'light', 'dark', 'default']
+
 
 class JSCustom:
     """
@@ -122,8 +126,18 @@ class HelperFunctions:
 
     @staticmethod
     # Function to create the cards
-    def make_cards(k, h, v):
-        with tag.div(_class="card text-white bg-%s m-3" % (k), style="width: 20rem;") as m:
+    def make_cards(b_only, k, h, v):
+        if k not in JSCSS.valid_tags:
+            raise NotValidTag, '\n\n%s is not a valid tag. \nChoose one of the following: \n%s' % (
+            k, '\n'.join([x for x in JSCSS.valid_tags]))
+        # checks bool and determines styling
+        if b_only:
+            style = 'border'
+            text = 'text-primary'
+        else:
+            style = 'bg'
+            text = 'text-white'
+        with tag.div(_class="card %s %s-%s m-3" % (text, style, k), style="width: 20rem;") as m:
             tag.div(h, _class='card-header')
             with tag.div(_class="card-body"):
                 tag.p(v, _class="card-text")

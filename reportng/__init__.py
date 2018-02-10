@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Python report generator that wraps around bootstrap 4 using dominate.
-Usage is simple. Follows header, body..., footer structure
+Usage is simple. Follows header, section..., footer structure. reportng
+relies on JS for some of its dynamic properties and has been developed
+using modern browsers.
 """
 import os
 import logging
@@ -19,7 +21,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.26'
+__version__ = '0.27'
 
 
 class ReportWriter:
@@ -183,8 +185,7 @@ class ReportWriter:
             color = 'bg'
         else:
             color = 'text'
-        if tag_color not in ['primary', 'secondary', 'success',
-                             'danger', 'warning', 'info', 'default']:
+        if tag_color not in rng.JSCSS.valid_tags:
             raise rng.NotValidTag, 'Valid tags are primary secondary success danger warning info'
 
         # create a space between body jumbotrons
@@ -319,19 +320,27 @@ class ReportWriter:
             tag.p(content)
         return str(rng.HelperFunctions.convert_to_string(s))
 
-    def report_cards(self, *args):
+    def report_cards(self, *args, **kwargs):
         """
         Functions that allow adding multiple cards to a jumbotron
 
         :param tuple args: Tuples that creates cards. The first value of the tuple is used to color the card, second value is the header for the card and the third is passed to a p tag for content
+        :param bool kwargs: Set the value of ``border_only=True`` to get only borders. Default is false
 
         Example:
-            >>> r += report_cards(('primary', 'header1', 'some text'), ('success', 'header2', 'some other text'))
+            >>> r += report_cards(('primary', 'header1', 'some text'),
+            >>>                   ('success', 'header2', 'some other text'))
         """
 
         # Check to see if args is a tuple
         if not isinstance(args, tuple):
             raise TypeError, 'Use tuples only'
+
+        # if the kwarg border exists, this set bool value
+        if kwargs.has_key('border_only'):
+            border = True
+        else:
+            border = False
 
         with tag.div(_class="jumbotron container context",
                      style="padding-bottom:3; padding-top:40;") as c:  # padding mods
@@ -343,7 +352,7 @@ class ReportWriter:
                     k = args[i][0]
                     h = args[i][1]
                     v = args[i][2]
-                    rng.HelperFunctions.make_cards(k, h, v)
+                    rng.HelperFunctions.make_cards(border, k, h, v)
         return str(c)
 
     def report_footer(self, message='', **kwargs):
@@ -398,7 +407,6 @@ class DownloadAssets:
     """
     This class is used to download and save all the css/js files locally and path them for the report
     """
-
     @staticmethod
     def download_assets(path, theme='lux'):
         """
@@ -413,7 +421,8 @@ class DownloadAssets:
             >>> DownloadAssets.download_assets(path='/tmp/assets/')
             >>> r = ReportWriter('Title', 'securisec')
         """
-        logging.warning('Some files like font-awesome (all.css) does not work unless put into specific folders')
+        logging.warning(
+            'Some files like font-awesome (all.css) does not work unless put into specific folders')
         change = vars(rng.JSCSS)
         for k, v in change.items():
             if not '__' in k:
@@ -437,4 +446,3 @@ class DownloadAssets:
 # TODO: something that will allow user to loop and add content
 # TODO: integrate components of mark.js. Somehow to filter inside a section
 # TODO: make header method mandatory
-# TODO: highlight show count of matches
