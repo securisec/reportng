@@ -8,12 +8,9 @@ import logging
 import urllib2
 import rnghelpers as rng
 
-try:
-    import dominate
-    import dominate.tags as tag
-    from dominate.util import raw
-except ImportError:
-    print 'pip install dominate'
+import dominate
+import dominate.tags as tag
+from dominate.util import raw
 
 # ugly way to address unicode encode issues
 import sys
@@ -22,13 +19,16 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.25'
+__version__ = '0.26'
 
 
 class ReportWriter:
     """
     The main class that is used. Modifiable parameters are report_name,
     theme, brand and highlight_color
+
+    Example with enabling code highlighting:
+        >>> r = reporng.ReportWriter('my report', 'securisec', code_highligh=True)
     """
 
     def __init__(self, report_name, brand, asciinema=False, code_highlight=False):
@@ -46,9 +46,6 @@ class ReportWriter:
         self.asciinema = asciinema
         self.code_highlight = code_highlight
 
-    def convert_to_string(self, s):
-        return '%s' % s
-
     def report_header(self, theme='lux', highlight_color='#f1c40f'):
         """
         Controls the link and script tags in the head. This method should always be called
@@ -57,6 +54,9 @@ class ReportWriter:
         :param str theme: Name of any bootswatch theme. Default is lux
         :param str highlight_color: any rgb color. default is #f1c40f
         :return: The head tag for the report.
+
+        Example showing how to change the default theme:
+            >>> r = report.report_header(theme='flatly')
         """
 
         with self.document.head as report_head:
@@ -96,8 +96,11 @@ class ReportWriter:
 
             # bootswatch style sheets
             tag.comment('style sheets')
-            tag.link(rel="stylesheet", type="text/css",
-                     href="https://bootswatch.com/4/%s/bootstrap.min.css" % theme)
+            if theme != 'lux':
+                bootswatch = "https://bootswatch.com/4/%s/bootstrap.min.css" % theme
+            else:
+                bootswatch = rng.JSCSS.bootswatch
+            tag.link(rel="stylesheet", type="text/css", href=bootswatch)
             tag.link(href=rng.JSCSS.font_awesome, rel="stylesheet")
 
             # constructing this way to avoid loading un needed js and css
@@ -172,6 +175,9 @@ class ReportWriter:
         :param str tag_color: The severity color of the section.
         :param bool title_bg: Controls if the header background or text is colored. Default is True and lets background color.
         :return: a jumbotron object
+
+        Example show how to use a red title with only colored text
+            >>> r += report.report_section('some title', content, tag_color='warning', titble_bg=False)
         """
         if title_bg:
             color = 'bg'
@@ -193,34 +199,23 @@ class ReportWriter:
                 tag.pre(content)
             else:
                 tag.p(content)
-        return str(self.convert_to_string(r))
+        return str(rng.HelperFunctions.convert_to_string(r))
 
-    def report_add_image_carousel(self, *args):
+    def report_image_carousel(self, *args):
         """
         :param list args: A list of image paths
         :return: image jumbotron carousel container
+
+        Example:
+            >>> r += report.report_image_carousel('example.jpg', 'example1.png')
         """
-
-        # Function that creates to ol tags and populates with il tags for
-        # carousel count indicator
-        def carousel_slide_indicator(num):
-            with tag.ol(_class="carousel-indicators") as o:
-                for cnt in range(num):
-                    if cnt == 0:
-                        tag.li(data_target="#carousel_controls",
-                               data_slide_to="0", _class="active")
-                    else:
-                        tag.li(data_target="#carousel_controls",
-                               data_slide_to="%s" % str(cnt))
-            return o
-
         # create jumbotron container
         with tag.div(_class="jumbotron jumbomargin container",
                      style="padding:0; margin-top:-2rem;") as i:
             with tag.div(_class="carousel slide", id="carousel_controls", data_interval="false",
                          data_ride="carousel"):
                 # add the carousel image indicator based on the number of images
-                carousel_slide_indicator(len(args))
+                rng.HelperFunctions.slide_indicator(len(args))
                 with tag.div(_class="carousel-inner"):
                     # iterate over *image_links
                     for index_num, image in enumerate(args):
@@ -254,7 +249,10 @@ class ReportWriter:
         Section creates a jumbotron to house an asciinema
 
         :param str asciinema_link: Link to asciinema. Could be http/s or local files
-        :param str title: Set the title of the asciinema. If set, it will create its own section.
+        :param str title: Set the title of the asciinema. If set, it will create its own section. If not, it will append to previous section
+
+        Example:
+            >>> r += report.report_asciinema('https://asciinema.org/a/XvEb7StzQ3C1BAAlvn9CDvqLR', title='asciinema')
         """
         logging.warning('This method only works with asciinema links because of the way\n \
             browsers enforce CORS')
@@ -293,6 +291,11 @@ class ReportWriter:
         :param str title: Title of the code section.
         :param str code: Code. Use pre and code tags so multiline code is fine
         :return: a string code section
+
+        Example of how to get code from file:
+            >>> with open('somefile.py', 'r') as f:
+            >>>     data = f.read()
+            >>> r += report_code_section('my py code', data)
         """
         if not self.code_highlight:
             raise rng.ObjectNotInitiated, 'To integrate code highlighting, set code_highlight=True in ReportWriter'
@@ -303,15 +306,45 @@ class ReportWriter:
                 tag.pre().add(tag.code(code))
         return str(c)
 
-    def report_notes(self, content):
+    def report_captions(self, content):
         """
         Simple method to added some center aligned text.
 
         :param str content: content to add
+
+        Example:
+            >>> r += report_captions('This is my caption')
         """
         with tag.div(_class="container text-center", style="margin-top:-30;") as s:
             tag.p(content)
-        return str(self.convert_to_string(s))
+        return str(rng.HelperFunctions.convert_to_string(s))
+
+    def report_cards(self, *args):
+        """
+        Functions that allow adding multiple cards to a jumbotron
+
+        :param tuple args: Tuples that creates cards. The first value of the tuple is used to color the card, second value is the header for the card and the third is passed to a p tag for content
+
+        Example:
+            >>> r += report_cards(('primary', 'header1', 'some text'), ('success', 'header2', 'some other text'))
+        """
+
+        # Check to see if args is a tuple
+        if not isinstance(args, tuple):
+            raise TypeError, 'Use tuples only'
+
+        with tag.div(_class="jumbotron container context",
+                     style="padding-bottom:3; padding-top:40;") as c:  # padding mods
+            with tag.div(_class="row justify-content-center"):
+                for i in range(len(args)):
+                    # Checks to make sure corrent number of values in tuple
+                    if len(args[i]) != 3:
+                        raise rng.TooManyValues, 'Only pass two values to each tuple'
+                    k = args[i][0]
+                    h = args[i][1]
+                    v = args[i][2]
+                    rng.HelperFunctions.make_cards(k, h, v)
+        return str(c)
 
     def report_footer(self, message='', **kwargs):
         """
@@ -319,6 +352,9 @@ class ReportWriter:
 
         :param str message: A message in the footer
         :param dict kwargs: Supported paramters are email, linkedin, github and twitter
+
+        Example with some social media:
+            >>> r += report_footer(message='securisec', twitter='https://twitter.com/securisec')
         """
         # creates the footer
         with tag.footer(_class="page-footer") as footer:
@@ -350,9 +386,50 @@ class ReportWriter:
 
         :param str all_objects: The tally of all the objects
         :param str path: path to save the file
+
+        Example:
+            >>> report_save(report, '/tmp/demo.html')
         """
         with open(os.path.expanduser(path), 'w+') as save:
             save.write(str(all_objects))
+
+
+class DownloadAssets:
+    """
+    This class is used to download and save all the css/js files locally and path them for the report
+    """
+
+    @staticmethod
+    def download_assets(path, theme='lux'):
+        """
+        This method is used to download all online assests like JS/CSS locally. This method
+        also will change all the src and href links to the local files
+
+        :param str path: Path to save the files in
+        :param str theme: The name of the bootswatch theme. Defaults to Lux
+
+        Example:
+            >>> from reportng import ReportWriter, DownloadAssets
+            >>> DownloadAssets.download_assets(path='/tmp/assets/')
+            >>> r = ReportWriter('Title', 'securisec')
+        """
+        logging.warning('Some files like font-awesome (all.css) does not work unless put into specific folders')
+        change = vars(rng.JSCSS)
+        for k, v in change.items():
+            if not '__' in k:
+                local_file = v.split('/')[-1]
+                with open(path + local_file, 'w+') as f:
+                    if 'https://bootswatch.com/4/' in v:
+                        v = v.replace('lux', theme)
+                        local_file = v.split('/')[-1]
+                    response = urllib2.build_opener()
+                    response.addheaders = [('User-Agent',
+                                            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 \
+                                            (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36')]
+                    f.write(response.open(v).read())
+                    logging.info('Downloaded %s to %s' % (v, path))
+                    change[k] = './' + local_file
+
 
 # TODO: add a brand image that is resized with the navbar
 # TODO: option to add captions to images
@@ -360,3 +437,4 @@ class ReportWriter:
 # TODO: something that will allow user to loop and add content
 # TODO: integrate components of mark.js. Somehow to filter inside a section
 # TODO: make header method mandatory
+# TODO: highlight show count of matches

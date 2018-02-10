@@ -11,6 +11,13 @@ Some example use cases of ``reportng`` are
 * Create a report of debugging
 * etc...
 
+``reportng`` is stackable. This means that it follows the following convention
+
+* report_header
+* report_section
+* ...
+* report_footer
+
 Social
 ------
 
@@ -25,12 +32,22 @@ Installation
 
 Documentation
 -------------
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+
 .. automodule:: reportng
     :members:
+
 
 .. autoclass:: ReportWriter
     
     .. automethod:: __init__
+
+
+.. autoclass: DownloadAssets
+    :members:
 
 Helpers
 -------
@@ -39,9 +56,6 @@ Helpers
     :members:
 
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
 
 
 

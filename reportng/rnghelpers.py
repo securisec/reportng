@@ -1,6 +1,7 @@
 """
 Helper module for reportng
 """
+import dominate.tags as tag
 
 
 class JSCSS:
@@ -8,6 +9,8 @@ class JSCSS:
     This class controls constants that can be modified by the user and can be pointed to local files to host them locally
     """
 
+    #: bootswatch theme
+    bootswatch = "https://bootswatch.com/4/lux/bootstrap.min.css"
     #: jquery: Constant that handles jqery.min.js
     jquery = "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
     #: bs4_js: Constant that handles bootstrap.min.js
@@ -85,3 +88,43 @@ class ObjectNotInitiated(Exception):
     Exception when a method is called but not initiated
     """
     pass
+
+
+class TooManyValues(Exception):
+    """
+    Exception when too many args are passed
+    """
+    pass
+
+
+class HelperFunctions:
+    """
+    Some helper functions that does not impact how enduser uses reportng
+    """
+
+    @staticmethod
+    def convert_to_string(s):
+        return '%s' % s
+
+    @staticmethod
+    # Function that creates to ol tags and populates with il tags for
+    # carousel count indicator
+    def slide_indicator(num):
+        with tag.ol(_class="carousel-indicators") as o:
+            for cnt in range(num):
+                if cnt == 0:
+                    tag.li(data_target="#carousel_controls",
+                           data_slide_to="0", _class="active")
+                else:
+                    tag.li(data_target="#carousel_controls",
+                           data_slide_to="%s" % str(cnt))
+        return o
+
+    @staticmethod
+    # Function to create the cards
+    def make_cards(k, h, v):
+        with tag.div(_class="card text-white bg-%s m-3" % (k), style="width: 20rem;") as m:
+            tag.div(h, _class='card-header')
+            with tag.div(_class="card-body"):
+                tag.p(v, _class="card-text")
+        return m
