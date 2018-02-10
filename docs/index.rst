@@ -56,12 +56,54 @@ Helpers
     :members:
 
 
+Example
+-------
+
+.. code-block:: python
+
+    from reportng import ReportWriter
+    from subprocess import Popen, PIPE
+    import requests
+
+    r = ReportWriter(report_name='Demo report', brand='securisec')
+    report = r.report_header()
+
+    # Multiline support
+    report += r.report_section(
+    'Multiline Demo',
+    """
+    One line
+    Two line
+    """)
+
+    # Example stdio reporting
+    output = Popen('ls /tmp', shell=True, stdout=PIPE).stdout.read()
+    report += r.report_section('Output of ls', output, tag_color='success')
+
+    req = requests.get('https://httpbin.org/status/418').text
+    report += r.report_section('Output of requests', req, tag_color='info')
+
+    # Add an image carousel
+    report += r.report_add_image_carousel(
+        'foo.jpg',
+        'bar.jpg',
+        'baz.jpg')
+
+    # Add description for image carousel
+    report += r.report_notes('Nice pictures!')
+
+    # Add a footer
+    report += r.report_footer(message='Hello from securisec!',
+                              twitter='https://twitter.com/securisec',
+                              github='https://github.com/securisec')
+
+    # Save the report!
+    r.save_report(report, 'demo_report.html')
 
 
+    Indices and tables
+    ==================
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    * :ref:`genindex`
+    * :ref:`modindex`
+    * :ref:`search`
