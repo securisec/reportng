@@ -3,8 +3,7 @@ python:
   - "2.7"
 
 install:
-  - "pip install dominate"
-  - "python setup.py install"
+  - "pip install ."
 
 script:
   - "python ./.test/test.py"
