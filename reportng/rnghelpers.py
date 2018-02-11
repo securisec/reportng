@@ -6,7 +6,10 @@ import dominate.tags as tag
 
 class JSCSS:
     """
-    This class controls constants that can be modified by the user and can be pointed to local files to host them locally
+    This class controls constants that can be modified by the user and can be
+    pointed to local files to host them locally. Can be used with
+    ``DownloadAssets.download_assets(path)`` to save all files locally and point them
+    correctly
     """
 
     #: bootswatch theme
@@ -30,6 +33,18 @@ class JSCSS:
     #: progressbar: Constant that handles progressbar.js
     progressbar_js = "https://cdn.rawgit.com/securisec/reportng/master/js/progressbar.js"
 
+
+class CSSControl:
+    """
+    CSS control
+    """
+
+    #: css_overflow: This value can be modified globally so that all containers are the same size similar to the output report_code_section. Can be modified directly, or using overflow option in report_section
+    css_overflow = "max-height: 70%; overflow: auto; margin-bottom: 20"
+    #: jumbotron_style: Style attribute values of jumbotron
+    jumbotron_style = "padding-bottom:3; padding-top:40"
+    #: sticky_section_css: Controls if section should sticky with preceeding section
+    sticky_section_css = "padding:0; margin-top:-2rem;"
 
 
 class JSCustom:

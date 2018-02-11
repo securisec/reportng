@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.31'
+__version__ = '0.32'
 
 
 class ReportWriter:
@@ -184,21 +184,26 @@ class ReportWriter:
         return str(report_head)
 
     def report_section(self, title, content, pre_tag=True, tag_color='default',
-                       title_color=True):
+                       title_color=True, overflow=rng.CSSControl.css_overflow):
         """
         This form the main body of the report
 
         :param str title: The h1/header title of the section
-        :param bool pre_tag: Default is True and treats content as monospaced. Set to False to use p tag
+        :param bool pre_tag: Default is True and treats content as monospaced.
+            Set to False to use p tag
         :param str content: The content for this section
         :param str tag_color: The severity color of the section.
-        :param bool title_bg: Controls if the header background or text is colored. Default is True and lets background color.
+        :parm str style: Allows to control the style of the div container.
+            Defaults to scroll on overflow. Set to empty string to have all content show
+        :param bool title_bg: Controls if the header background or text is colored.
+            Default is True and lets background color.
         :return: a jumbotron object
         :raises NotValidTag: Raises exception if a valid tag is not used
 
         Example show how to use a red title with only colored text
             >>> r += report.report_section('some title', content, tag_color='warning', titble_bg=False)
         """
+
         if title_color:
             color = 'bg'
         else:
@@ -210,14 +215,15 @@ class ReportWriter:
         tag.br()
         # creates the jumbotron. User dictates if it is pre or p tag
         with tag.div(_class="jumbotron container context",
-                     style="padding-bottom:3; padding-top:40") as r:  # padding mods
+                     style=rng.CSSControl.jumbotron_style) as r:  # padding mods
             # can change the text color, or the background color
             tag.h1(title, _class="%s-%s" %
                                  (color, tag_color), id="%s" % title.replace(' ', ''))
-            if pre_tag:
-                tag.pre(content)
-            else:
-                tag.p(content)
+            with tag.div(_class="container", style=overflow):
+                if pre_tag:
+                    tag.pre(content)
+                else:
+                    tag.p(content)
         return str(rng.HelperFunctions.convert_to_string(r))
 
     def report_image_carousel(self, *args, **kwargs):
@@ -238,7 +244,7 @@ class ReportWriter:
             ordered_kwargs = OrderedDict(kwargs).values()
         # create jumbotron container
         with tag.div(_class="jumbotron jumbomargin container",
-                     style="padding:0; margin-top:-2rem;") as i:
+                     style=rng.CSSControl.sticky_section_css) as i:
             with tag.div(_class="carousel slide", id="carousel_controls", data_interval="false",
                          data_ride="carousel"):
                 # add the carousel image indicator based on the number of images
@@ -286,7 +292,8 @@ class ReportWriter:
         Section creates a jumbotron to house an asciinema
 
         :param str asciinema_link: Link to asciinema. Could be http/s or local files
-        :param str title: Set the title of the asciinema. If set, it will create its own section. If not, it will append to previous section
+        :param str title: Set the title of the asciinema. If set, it will create its own section.
+            If not, it will append to previous section
         :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
 
         Example:
@@ -309,17 +316,20 @@ class ReportWriter:
 
         # adjusts section padding if h1 is to be set or not
         if title != '':
-            style = "padding-bottom:3; padding-top:40"
+            style = rng.CSSControl.jumbotron_style
         else:
-            style = "padding:0; margin-top:-2rem;"
+            style = rng.CSSControl.sticky_section_css
 
         with tag.div(_class="jumbotron jumbomargin container",
                      style=style) as a:
             if title != '':
                 tag.h1(title, id="%s" % title.replace(' ', ''))
-            raw('<asciinema-player src="%s"></asciinema-player>' % url)
-            tag.script(
-                src=rng.JSCSS.asciinema_js)
+            with tag.div(_class="container", style="text-align: center;"):
+                raw('<asciinema-player src="%s"></asciinema-player>' % url)
+                tag.script(
+                    src=rng.JSCSS.asciinema_js)
+                tag.a('Asciinema link', _class="btn btn-secondary row justify-content-center btn-sm",
+                      role="button", href=asciinema_link, target="_blank")
         return str(a)
 
     def report_code_section(self, title, code):
@@ -362,7 +372,9 @@ class ReportWriter:
         """
         Functions that allow adding multiple cards to a jumbotron
 
-        :param tuple \**args: Tuples that creates cards. The first value of the tuple is used to color the card, second value is the header for the card and the third is passed to a p tag for content
+        :param tuple \**args: Tuples that creates cards. The first value of the
+            tuple is used to color the card, second value is the header for the
+            card and the third is passed to a p tag for content
         :param \**kwargs: See valid keys in documentation
         :raises TypeError: Raises TypeError if args is not a tuple
         :raises TooManyValues: Raises exception when the number of values in tuple is not 3
@@ -390,7 +402,7 @@ class ReportWriter:
 
         # control if stick to previous section or not
         if kwargs.has_key('section'):
-            style = "padding:0; margin-top:-2rem;"
+            style = rng.CSSControl.sticky_section_css
         else:
             style = "padding-bottom:3; padding-top:40;"
 

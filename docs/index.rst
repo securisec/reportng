@@ -31,33 +31,60 @@ Installation
     pip install reportng
 
 Documentation
--------------
+=============
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-
-.. automodule:: reportng
+ReportWriter
+------------
+.. autoclass:: reportng.ReportWriter
     :members:
-
-
-.. autoclass:: ReportWriter
 
     .. automethod:: __init__
 
-
-.. autoclass: DownloadAssets
+DownloadAssets
+--------------
+.. autoclass: reportng.DownloadAssets
     :members:
+
 
 Helpers
--------
+=======
 
-.. automodule:: reportng.rnghelpers
+JSCSS
+-----
+.. autoclass:: reportng.rnghelpers.JSCSS
     :members:
+
+
+CSSControl
+----------
+.. autoclass:: reportng.rnghelpers.CSSControl
+    :members:
+
+
+JSCustom
+--------
+.. autoclass:: reportng.rnghelpers.JSCustom
+    :members:
+
+
+HelperFunctions
+---------------
+.. autoclass:: reportng.rnghelpers.HelperFunctions
+    :members:
+
+
+Exceptions
+==========
+.. autoexception:: reportng.rnghelpers.NotValidTag
+.. autoexception:: reportng.rnghelpers.ObjectNotInitiated
+.. autoexception:: reportng.rnghelpers.TooManyValues
 
 
 Example
--------
+=======
 
 .. code-block:: python
 
