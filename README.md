@@ -26,7 +26,7 @@ All the usable methods start with the prefix _report_
 ![](https://github.com/securisec/reportng/blob/master/sample%20report/report_header.png)
 - **report_section** is used to create the main body/section for reportng. This method supports _pre_ tags by default, but _p_ can be used also.
 ![](https://github.com/securisec/reportng/blob/master/sample%20report/report_section.png)
-- **report_add_image_carousel** is used to add an image carousel. It takes *args and multiple images can be passed to it.
+- **report_image_carousel** is used to add an image carousel. It takes *args and multiple images can be passed to it.
 
 ![](https://github.com/securisec/reportng/blob/master/sample%20report/report_image_carousal.gif)
 - **report_asciinema** is used to add an asciinema. At the moment, it can use take a valid asciinema url. Example `https://asciinema.org/a/117928`

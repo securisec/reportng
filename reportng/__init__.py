@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.28'
+__version__ = '0.29'
 
 
 class ReportWriter:
@@ -206,6 +206,8 @@ class ReportWriter:
 
     def report_image_carousel(self, *args, **kwargs):
         """
+        Is used to create an image carousel with optional captions
+
         :param args args: A list of image paths
         :param kwargs kwargs: Kwargs handle image captions and must be in the same order as args
         :return: image jumbotron carousel container
@@ -345,12 +347,11 @@ class ReportWriter:
         Functions that allow adding multiple cards to a jumbotron
 
         :param tuple args: Tuples that creates cards. The first value of the tuple is used to color the card, second value is the header for the card and the third is passed to a p tag for content
-        :param bool kwargs: Set the value of ``border_only=True`` to get only borders. Default is false
-        :param bool kwargs: Set section=True to append the cards section to the preceding section
-        :raise TypeError: Raises TypeError if args is not a tuple
-        :raise TooManyValues: Raises exception when the number of values in tuple is not 3
-
-
+        :param bool kwargs: Set the value of ``border_only=True`` to get only borders. Default is false.
+        Set section=True to append the cards section to the preceding section. Default is false
+        Set a title by using title='Some title'
+        :raises TypeError: Raises TypeError if args is not a tuple
+        :raises TooManyValues: Raises exception when the number of values in tuple is not 3
         Example:
             >>> r += report_cards(('primary', 'header1', 'some text'),
             >>>                   ('success', 'header2', 'some other text'))
@@ -368,12 +369,14 @@ class ReportWriter:
 
         # control if stick to previous section or not
         if kwargs.has_key('section'):
-            style = "padding:3; margin-top:-2rem;"
+            style = "padding:0; margin-top:-2rem;"
         else:
             style = "padding-bottom:3; padding-top:40;"
 
         with tag.div(_class="jumbotron container context",
                      style=style) as c:  # padding mods
+            if kwargs.has_key('title'):
+                tag.h1(kwargs.get('title'))
             with tag.div(_class="row justify-content-center"):
                 for i in range(len(args)):
                     # Checks to make sure corrent number of values in tuple
