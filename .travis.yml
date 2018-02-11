@@ -6,5 +6,6 @@ install:
   - "pip -v install ."
 
 script:
+  - "python -cv import dominate"
   - "python ./.test/test.py"
-  - "ls -l ./.test"
+  - "ls -l */*"
