@@ -8,3 +8,4 @@ install:
 
 script:
   - "python ./.test/test.py"
+  - "ls -l ./.test"
