@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.29'
+__version__ = '0.30'
 
 
 class ReportWriter:
@@ -187,7 +187,7 @@ class ReportWriter:
             color = 'bg'
         else:
             color = 'text'
-        if tag_color not in rng.JSCSS.valid_tags:
+        if tag_color not in rng.HelperFunctions.valid_tags:
             raise rng.NotValidTag, 'Valid tags are primary secondary success danger warning info'
 
         # create a space between body jumbotrons
@@ -348,10 +348,11 @@ class ReportWriter:
 
         :param tuple args: Tuples that creates cards. The first value of the tuple is used to color the card, second value is the header for the card and the third is passed to a p tag for content
         :param bool kwargs: Set the value of ``border_only=True`` to get only borders. Default is false.
-        Set section=True to append the cards section to the preceding section. Default is false
-        Set a title by using title='Some title'
+            Set ``section=True`` to append the cards section to the preceding section. Default is false
+            Set a title by using ``title='Some title'``
         :raises TypeError: Raises TypeError if args is not a tuple
         :raises TooManyValues: Raises exception when the number of values in tuple is not 3
+
         Example:
             >>> r += report_cards(('primary', 'header1', 'some text'),
             >>>                   ('success', 'header2', 'some other text'))
@@ -440,6 +441,7 @@ class DownloadAssets:
     """
     This class is used to download and save all the css/js files locally and path them for the report
     """
+
     @staticmethod
     def download_assets(path, theme='lux'):
         """
