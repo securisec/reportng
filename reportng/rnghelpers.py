@@ -16,7 +16,7 @@ class JSCSS:
     #: bs4_js: Constant that handles bootstrap.min.js
     bs4_js = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
     #: highlight_custom: Constant that handles the custom js that aids in highlighting
-    highlight_custom = "https://cdn.rawgit.com/securisec/misc_things/f8d2b846/highlight.js"
+    highlight_custom = "https://cdn.rawgit.com/securisec/reportng/master/js/highlight.js"
     #: font_awesome: Constant that handles font awesomes all.min.js
     font_awesome = "https://use.fontawesome.com/releases/v5.0.6/css/all.css"
     #: asciinema_css: Constant that handles asciinema-player.min.js
@@ -27,6 +27,8 @@ class JSCSS:
     highlightjs_css = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"
     #: highlight_js: Constant that handles highlight.min.js
     highlightjs_js = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"
+    #: progressbar: Constant that handles progressbar.js
+    progressbar_js = "https://cdn.rawgit.com/securisec/reportng/master/js/progressbar.js"
 
 
 
@@ -72,6 +74,14 @@ class JSCustom:
                     $(".dropdown-menu a").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                     });
+                });
+                });
+                """
+
+    progress_bar = """
+                $(function() {
+                $("body").prognroll({
+                    height: 7
                 });
                 });
                 """

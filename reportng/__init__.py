@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.30'
+__version__ = '0.31'
 
 
 class ReportWriter:
@@ -34,20 +34,30 @@ class ReportWriter:
         >>> r = reporng.ReportWriter('my report', 'securisec', code_highligh=True)
     """
 
-    def __init__(self, report_name, brand, asciinema=False, code_highlight=False):
+    def __init__(self, report_name, brand, **kwargs):
         """
         Assign theme and report name
 
         :param str brand: Name of the company/tester
         :param str report_name: Name of report. Default is Sample report
-        :param bool asciinema: Set to true to use asciinema's in report. Default is False
-        :param bool code_highlight: Set to True in order to use code highlighting
+        :param \**kwargs: See documentation for valid keys
+
+        Kwargs:
+            * **asciinema** (*bool*): Set to true to use asciinema's in report. Default is False
+            * **code_highlight** (*bool*): Set to True in order to use code highlighting
+            * **progress_bar** (*bool*): Set to True to enable the progress bar
+
+        Example:
+            >>> import reportng
+            >>> r = reportng.ReportWriter(report_name='myreport', brand='securisec')
+            >>> report = r.header(...)
         """
         self.report_name = report_name
         self.brand = brand
         self.document = dominate.document(title=self.report_name)
-        self.asciinema = asciinema
-        self.code_highlight = code_highlight
+        self.asciinema = kwargs.get('asciinema')
+        self.code_highlight = kwargs.get('code_highlight')
+        self.progress_bar = kwargs.get('progress_bar')
 
     def report_header(self, theme='lux', highlight_color='#f1c40f'):
         """
@@ -108,13 +118,13 @@ class ReportWriter:
 
             # constructing this way to avoid loading un needed js and css
             # css for asciinema
-            if self.asciinema:
+            if self.asciinema == True:
                 tag.comment('css for asciinema')
                 tag.link(rel="stylesheet", type="text/css",
                          href=rng.JSCSS.asciinema_css)
 
             # css and js for highlight.js
-            if self.code_highlight:
+            if self.code_highlight == True:
                 tag.comment('css and js for highlight.js')
                 tag.link(rel="stylesheet", href=rng.JSCSS.highlightjs_css)
                 tag.script(src=rng.JSCSS.highlightjs_js)
@@ -123,6 +133,13 @@ class ReportWriter:
                     hljs.initHighlightingOnLoad();
                     """
                 ))
+
+            # script for progress bar
+            if self.progress_bar == True:
+                tag.comment('js for progress bar')
+                tag.script(
+                    src=rng.JSCSS.progressbar_js)
+                tag.script(raw(rng.JSCustom.progress_bar))
 
             # search highlight color control
             tag.comment('search highlight color control')
@@ -140,7 +157,6 @@ class ReportWriter:
                     tag.span(_class="navbar-toggler-icon")
 
                 # Search box and button on navbar
-                # https://codepen.io/SitePoint/pen/oxOrxM
                 # make sure to include the word context to div/p tags to make it searchable
                 with tag.div(_class="navbar-collapse collapse justify-content-md-end", id="navbarid"):
                     # ul class to house the navbar navigation items
@@ -168,7 +184,7 @@ class ReportWriter:
         return str(report_head)
 
     def report_section(self, title, content, pre_tag=True, tag_color='default',
-                       title_bg=True):
+                       title_color=True):
         """
         This form the main body of the report
 
@@ -183,7 +199,7 @@ class ReportWriter:
         Example show how to use a red title with only colored text
             >>> r += report.report_section('some title', content, tag_color='warning', titble_bg=False)
         """
-        if title_bg:
+        if title_color:
             color = 'bg'
         else:
             color = 'text'
@@ -208,8 +224,8 @@ class ReportWriter:
         """
         Is used to create an image carousel with optional captions
 
-        :param args args: A list of image paths
-        :param kwargs kwargs: Kwargs handle image captions and must be in the same order as args
+        :param str \**args: A list of image paths
+        :param \**kwargs: Kwargs handle image captions and must be in the same order as args
         :return: image jumbotron carousel container
         :raises IndexError: If the number of kwargs is not equal to args
 
@@ -346,16 +362,20 @@ class ReportWriter:
         """
         Functions that allow adding multiple cards to a jumbotron
 
-        :param tuple args: Tuples that creates cards. The first value of the tuple is used to color the card, second value is the header for the card and the third is passed to a p tag for content
-        :param bool kwargs: Set the value of ``border_only=True`` to get only borders. Default is false.
-            Set ``section=True`` to append the cards section to the preceding section. Default is false
-            Set a title by using ``title='Some title'``
+        :param tuple \**args: Tuples that creates cards. The first value of the tuple is used to color the card, second value is the header for the card and the third is passed to a p tag for content
+        :param \**kwargs: See valid keys in documentation
         :raises TypeError: Raises TypeError if args is not a tuple
         :raises TooManyValues: Raises exception when the number of values in tuple is not 3
 
+        Kwargs:
+            * **section** (*bool*) - Set to True to append the cards section to the preceding section. Default is false
+            * **title** (*str*) - Sets an optional title for cards
+            * **border_only** (*bool*) - Changes the look of the cards
+
         Example:
             >>> r += report_cards(('primary', 'header1', 'some text'),
-            >>>                   ('success', 'header2', 'some other text'))
+            >>>                   ('success', 'header2', 'some other text'),
+            >>>                    title='My cards')
         """
 
         # Check to see if args is a tuple
@@ -394,7 +414,13 @@ class ReportWriter:
         Returns the footer object. Supports social media
 
         :param str message: A message in the footer
-        :param dict kwargs: Supported paramters are email, linkedin, github and twitter
+        :param \**kwargs: Supported paramters are email, linkedin, github and twitter
+
+        Kwargs:
+            * **twitter** (*str*) - Twitter link
+            * **github** (*str*) - Github link
+            * **linkedin** (*str*) - LinkedIn link
+            * **email** (*str*) - email address
 
         Example with some social media:
             >>> r += report_footer(message='securisec', twitter='https://twitter.com/securisec')

@@ -10,6 +10,7 @@ Currently, reportng supports the following:
 - Image carousels with captions
 - Stackable cards
 - Social integrated footers
+- Progress bar
 
 ## Installation
 > `pip install -U reportng`
