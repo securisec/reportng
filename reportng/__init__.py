@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.33'
+__version__ = '0.34'
 
 
 class ReportWriter:
@@ -83,12 +83,18 @@ class ReportWriter:
             # main style components
             tag.script(src=rng.JSCSS.jquery)
             tag.script(src=rng.JSCSS.bs4_js)
-            tag.script(src=rng.JSCSS.highlight_custom)
+            tag.script(src=rng.JSCSS.mark_js)
 
             # JS for search highlighting
-            tag.comment('JS to highlight onkeyup')
+            # tag.comment('JS to highlight onkeyup')
+            # tag.script(raw(
+            #     rng.JSCustom.highlight_js
+            # ))
+
+            # JS for mark_js
+            tag.comment('JS for mark.js')
             tag.script(raw(
-                rng.JSCustom.highlight_js
+                rng.JSCustom.markjs_script
             ))
 
             # JS to populate the navbar dropdown
@@ -153,8 +159,14 @@ class ReportWriter:
 
             # search highlight color control
             tag.comment('search highlight color control')
-            tag.style('span.highlight{background:  %s;}' %
-                      highlight_color)
+            # tag.style('span.highlight{background:  %s;}' %
+            #           highlight_color)
+            tag.style(raw(
+                """
+                mark {background: %s;}
+                mark.current {background: orangered;}
+                """ % highlight_color
+            ))
 
             # Navbar on top with 2 margin to seperate from first jumbotron. add class mb-2
             with tag.nav(_class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top"):
@@ -183,13 +195,22 @@ class ReportWriter:
                                     tag.input(_class="form-control-sm", id="ddfilter",
                                               type="text", placeholder="Filter..")
                         # highlight box form starts here
-                        with tag.li(_class="nav-item"):
-                            with tag.form(_class="form-inline my-2 my-lg-0", id="form", autocomplete="off"):
-                                tag.input(_class="form-control mr-sm-2", type="text", placeholder="Highlight",
-                                          name="keyword", id="keyword", onkeyup="clickHighlight()")
-                                # Button is hidden
-                                tag.button("Highlight", _class="btn btn-secondary my-2 my-sm-0", type="button",
-                                           style="display: none;", name="perform", id="performbutton")
+                        # with tag.li(_class="nav-item"):
+                        #     with tag.form(_class="form-inline my-2 my-lg-0", id="form", autocomplete="off"):
+                        #         tag.input(_class="form-control mr-sm-2", type="text", placeholder="Highlight",
+                        #                   name="keyword", id="keyword", onkeyup="clickHighlight()")
+                        #         # Button is hidden
+                        #         tag.button("Highlight", _class="btn btn-secondary my-2 my-sm-0", type="button",
+                        #                    style="display: none;", name="perform", id="performbutton")
+                        # input for search box
+                        tag.input(_class="form-control mr-sm-2", type="search", placeholder="Search")
+                        raw(
+                            """
+                            <button data-search="next" class="btn btn-sm btn-secondary">&darr;</button>
+                            <button data-search="prev" class="btn btn-sm btn-secondary">&uarr;</button>
+                            <button data-search="clear" class="btn btn-sm btn-secondary">✖</button>
+                            """
+                        )
 
         return str(report_head)
 
@@ -506,8 +527,10 @@ class Assets:
         """
         logging.warning(
             'Some files like font-awesome (all.css) does not work unless put into specific folders')
+        # Check to make sure path is a dir
         if not os.path.isdir(path):
             raise TypeError('Path is not a directory')
+
         change = vars(rng.JSCSS)
         for k, v in change.items():
             if not '__' in k:
@@ -527,6 +550,5 @@ class Assets:
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: something that will allow user to loop and add content
-# TODO: integrate components of mark.js. Somehow to filter inside a section
 # TODO: make header method mandatory
 # TODO: add regex support for highlight

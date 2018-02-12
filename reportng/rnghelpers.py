@@ -18,8 +18,8 @@ class JSCSS:
     jquery = "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
     #: bs4_js: Constant that handles bootstrap.min.js
     bs4_js = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    #: highlight_custom: Constant that handles the custom js that aids in highlighting
-    highlight_custom = "https://cdn.rawgit.com/securisec/reportng/master/js/highlight.js"
+    # highlight_custom: Constant that handles the custom js that aids in highlighting
+    # comment highlight_custom = "https://cdn.rawgit.com/securisec/reportng/master/js/highlight.js"
     #: font_awesome: Constant that handles font awesomes all.min.js
     font_awesome = "https://use.fontawesome.com/releases/v5.0.6/css/all.css"
     #: asciinema_css: Constant that handles asciinema-player.min.js
@@ -32,6 +32,8 @@ class JSCSS:
     highlightjs_js = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"
     #: progressbar: Constant that handles progressbar.js
     progressbar_js = "https://cdn.rawgit.com/securisec/reportng/master/js/progressbar.js"
+    #: mark_js: Constant that handles mark.js
+    mark_js = "https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js"
 
 
 class CSSControl:
@@ -100,6 +102,63 @@ class JSCustom:
                 });
                 });
                 """
+
+    markjs_script = """
+                    $(function () {
+                        var $input = $("input[type='search']"),
+                            $clearBtn = $("button[data-search='clear']"),
+                            $prevBtn = $("button[data-search='prev']"),
+                            $nextBtn = $("button[data-search='next']"),
+                            $content = $(".context"),
+                            $results,
+                            currentClass = "current",
+                            offsetTop = 150,
+                            currentIndex = 0;
+                        function jumpTo() {
+                            if ($results.length) {
+                                var position,
+                                    $current = $results.eq(currentIndex);
+                                $results.removeClass(currentClass);
+                                if ($current.length) {
+                                    $current.addClass(currentClass);
+                                    position = $current.offset().top - offsetTop;
+                                    window.scrollTo(0, position);
+                                }
+                            }
+                        }
+                        $input.on("input", function () {
+                            var searchVal = this.value;
+                            $content.unmark({
+                                done: function () {
+                                    $content.mark(searchVal, {
+                                        separateWordSearch: true,
+                                        done: function () {
+                                            $results = $content.find("mark");
+                                            currentIndex = 0;
+                                            jumpTo();
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                        $clearBtn.on("click", function () {
+                            $content.unmark();
+                            $input.val("").focus();
+                        });
+                        $nextBtn.add($prevBtn).on("click", function () {
+                            if ($results.length) {
+                                currentIndex += $(this).is($prevBtn) ? -1 : 1;
+                                if (currentIndex < 0) {
+                                    currentIndex = $results.length - 1;
+                                }
+                                if (currentIndex > $results.length - 1) {
+                                    currentIndex = 0;
+                                }
+                                jumpTo();
+                            }
+                        });
+                    });
+                    """
 
 
 class NotValidTag(Exception):

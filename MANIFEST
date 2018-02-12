@@ -3,3 +3,4 @@ setup.cfg
 setup.py
 reportng/__init__.py
 reportng/rnghelpers.py
+test/test.py
