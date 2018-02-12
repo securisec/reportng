@@ -7,5 +7,5 @@ install:
 
 script:
   - 'python -c "import dominate; print dominate.document()"'
-  - "python ./.test/test.py"
+  - "python ./test/test.py"
   - "ls -la */*"
