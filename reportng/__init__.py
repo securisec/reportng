@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.32'
+__version__ = '0.33'
 
 
 class ReportWriter:
@@ -59,7 +59,7 @@ class ReportWriter:
         self.code_highlight = kwargs.get('code_highlight')
         self.progress_bar = kwargs.get('progress_bar')
 
-    def report_header(self, theme='lux', highlight_color='#f1c40f'):
+    def report_header(self, theme='lux', highlight_color='#f1c40f', **kwargs):
         """
         Controls the link and script tags in the head. This method should always be called
         at the top
@@ -67,6 +67,9 @@ class ReportWriter:
         :param str theme: Name of any bootswatch theme. Default is lux
         :param str highlight_color: any rgb color. default is #f1c40f
         :return: The head tag for the report.
+
+        Kwargs:
+            * **script** (*str*): Pass additional JS/jquery to add to header
 
         Example showing how to change the default theme:
             >>> r = report.report_header(theme='flatly')
@@ -106,6 +109,13 @@ class ReportWriter:
             tag.script(raw(
                 rng.JSCustom.dropdown_filter
             ))
+
+            # user insterted JS
+            if kwargs.has_key('script'):
+                tag.comment('User inserted JS')
+                tag.script(raw(
+                    kwargs.get('script')
+                ))
 
             # bootswatch style sheets
             tag.comment('style sheets')
@@ -475,7 +485,7 @@ class ReportWriter:
             save.write(str(all_objects))
 
 
-class DownloadAssets:
+class Assets:
     """
     This class is used to download and save all the css/js files locally and path them for the report
     """
@@ -490,12 +500,14 @@ class DownloadAssets:
         :param str theme: The name of the bootswatch theme. Defaults to Lux
 
         Example:
-            >>> from reportng import ReportWriter, DownloadAssets
-            >>> DownloadAssets.download_assets(path='/tmp/assets/')
+            >>> from reportng import ReportWriter, Assets
+            >>> Assets.download_assets(path='/tmp/assets/')
             >>> r = ReportWriter('Title', 'securisec')
         """
         logging.warning(
             'Some files like font-awesome (all.css) does not work unless put into specific folders')
+        if not os.path.isdir(path):
+            raise TypeError('Path is not a directory')
         change = vars(rng.JSCSS)
         for k, v in change.items():
             if not '__' in k:
@@ -511,7 +523,6 @@ class DownloadAssets:
                     f.write(response.open(v).read())
                     logging.info('Downloaded %s to %s' % (v, path))
                     change[k] = './' + local_file
-
 
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture

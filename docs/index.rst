@@ -43,10 +43,12 @@ ReportWriter
 
     .. automethod:: __init__
 
-DownloadAssets
+Assets
 --------------
-.. autoclass: reportng.DownloadAssets
+.. autoclass: reportng.Assets
     :members:
+
+    .. automethod:: download_assets
 
 
 Helpers
