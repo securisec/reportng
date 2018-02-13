@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import reportng
 
-reportng.Assets.download_assets('.', theme='pulse')
+reportng.Assets.download_assets(download_path='./', rel_path='./', theme='pulse')
 print 'download_assets'
 
 

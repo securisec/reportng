@@ -130,8 +130,8 @@ class JSCustom:
                             var searchVal = this.value;
                             $content.unmark({
                                 done: function () {
-                                    $content.mark(searchVal, {
-                                        separateWordSearch: true,
+                                    $content.markRegExp(RegExp(searchVal), {
+                                        separateWordSearch: false,
                                         done: function () {
                                             $results = $content.find("mark");
                                             currentIndex = 0;

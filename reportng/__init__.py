@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.34'
+__version__ = '0.35'
 
 
 class ReportWriter:
@@ -203,7 +203,8 @@ class ReportWriter:
                         #         tag.button("Highlight", _class="btn btn-secondary my-2 my-sm-0", type="button",
                         #                    style="display: none;", name="perform", id="performbutton")
                         # input for search box
-                        tag.input(_class="form-control mr-sm-2", type="search", placeholder="Search")
+                        tag.input(_class="form-control mr-sm-2",
+                                  type="search", placeholder="Search")
                         raw(
                             """
                             <button data-search="next" class="btn btn-sm btn-secondary">&darr;</button>
@@ -240,7 +241,8 @@ class ReportWriter:
         else:
             color = 'text'
         if tag_color not in rng.HelperFunctions.valid_tags:
-            raise rng.NotValidTag, 'Valid tags are primary secondary success danger warning info'
+            raise rng.NotValidTag(
+                'Valid tags are primary secondary success danger warning info')
 
         # create a space between body jumbotrons
         tag.br()
@@ -334,7 +336,8 @@ class ReportWriter:
             browsers enforce CORS')
         # checks to see if asciinema has been intialized
         if not self.asciinema:
-            raise rng.ObjectNotInitiated, 'To integrate asciinema, set asciinema=True in ReportWriter'
+            raise rng.ObjectNotInitiated(
+                'To integrate asciinema, set asciinema=True in ReportWriter')
 
         # TODO: write a check here that validates the asciinema url
 
@@ -378,7 +381,8 @@ class ReportWriter:
             >>> r += report_code_section('my py code', data)
         """
         if not self.code_highlight:
-            raise rng.ObjectNotInitiated, 'To integrate code highlighting, set code_highlight=True in ReportWriter'
+            raise rng.ObjectNotInitiated(
+                'To integrate code highlighting, set code_highlight=True in ReportWriter')
         with tag.div(_class="jumbotron container context",
                      style="padding-bottom:3; padding-top:40;") as c:  # padding mods
             tag.h1(title, id="%s" % title.replace(' ', ''))
@@ -423,7 +427,7 @@ class ReportWriter:
 
         # Check to see if args is a tuple
         if not isinstance(args, tuple):
-            raise TypeError, 'Use tuples only'
+            raise TypeError('Use tuples only')
 
         # if the kwarg border exists, this set bool value
         if kwargs.has_key('border_only'):
@@ -445,7 +449,8 @@ class ReportWriter:
                 for i in range(len(args)):
                     # Checks to make sure corrent number of values in tuple
                     if len(args[i]) != 3:
-                        raise rng.TooManyValues, 'Only pass three values to each tuple'
+                        raise rng.TooManyValues(
+                            'Only pass three values to each tuple')
                     k = args[i][0]
                     h = args[i][1]
                     v = args[i][2]
@@ -512,30 +517,31 @@ class Assets:
     """
 
     @staticmethod
-    def download_assets(path, theme='lux'):
+    def download_assets(download_path, rel_path, theme='lux'):
         """
         This method is used to download all online assests like JS/CSS locally. This method
         also will change all the src and href links to the local files
 
-        :param str path: Path to save the files in
+        :param str download_path: Path to save the files in
+        :param str rel_path: Relative path from where the html will be saved
         :param str theme: The name of the bootswatch theme. Defaults to Lux
 
         Example:
             >>> from reportng import ReportWriter, Assets
-            >>> Assets.download_assets(path='/tmp/assets/')
+            >>> Assets.download_assets(save_path='/tmp/assets/', rel_path='./assets/')
             >>> r = ReportWriter('Title', 'securisec')
         """
         logging.warning(
             'Some files like font-awesome (all.css) does not work unless put into specific folders')
         # Check to make sure path is a dir
-        if not os.path.isdir(path):
+        if not os.path.isdir(download_path):
             raise TypeError('Path is not a directory')
 
         change = vars(rng.JSCSS)
         for k, v in change.items():
             if not '__' in k:
                 local_file = v.split('/')[-1]
-                with open(path + local_file, 'w+') as f:
+                with open(download_path + local_file, 'w+') as f:
                     if 'https://bootswatch.com/4/' in v:
                         v = v.replace('lux', theme)
                         local_file = v.split('/')[-1]
@@ -544,11 +550,13 @@ class Assets:
                                             'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 \
                                             (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36')]
                     f.write(response.open(v).read())
-                    logging.info('Downloaded %s to %s' % (v, path))
-                    change[k] = './' + local_file
+                    logging.info('Downloaded %s to %s' % (v, download_path))
+                    change[k] = rel_path + local_file
+
 
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: something that will allow user to loop and add content
 # TODO: make header method mandatory
-# TODO: add regex support for highlight
+# TODO: support for py3
+# TODO: update setup.py to include py versions
