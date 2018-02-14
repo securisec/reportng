@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.35'
+__version__ = '0.36'
 
 
 class ReportWriter:
@@ -46,6 +46,7 @@ class ReportWriter:
             * **asciinema** (*bool*): Set to true to use asciinema's in report. Default is False
             * **code_highlight** (*bool*): Set to True in order to use code highlighting
             * **progress_bar** (*bool*): Set to True to enable the progress bar
+            * **search** (*bool*): Set to False to disable search and highlight
 
         Example:
             >>> import reportng
@@ -58,6 +59,7 @@ class ReportWriter:
         self.asciinema = kwargs.get('asciinema')
         self.code_highlight = kwargs.get('code_highlight')
         self.progress_bar = kwargs.get('progress_bar')
+        self.search = kwargs.get('search')
 
     def report_header(self, theme='lux', highlight_color='#f1c40f', **kwargs):
         """
@@ -83,7 +85,8 @@ class ReportWriter:
             # main style components
             tag.script(src=rng.JSCSS.jquery)
             tag.script(src=rng.JSCSS.bs4_js)
-            tag.script(src=rng.JSCSS.mark_js)
+            if not self.search == False:
+                tag.script(src=rng.JSCSS.mark_js)
 
             # JS for search highlighting
             # tag.comment('JS to highlight onkeyup')
@@ -171,6 +174,8 @@ class ReportWriter:
             # Navbar on top with 2 margin to seperate from first jumbotron. add class mb-2
             with tag.nav(_class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top"):
                 tag.a(self.brand, _class="navbar-brand", href="#")
+                # sets the report title on the navbar
+                tag.span(self.report_name, _class="navbar-text text-secondary")
 
                 # Button for responsive navbar
                 with tag.button(_class="navbar-toggler",
@@ -203,15 +208,16 @@ class ReportWriter:
                         #         tag.button("Highlight", _class="btn btn-secondary my-2 my-sm-0", type="button",
                         #                    style="display: none;", name="perform", id="performbutton")
                         # input for search box
-                        tag.input(_class="form-control mr-sm-2",
-                                  type="search", placeholder="Search")
-                        raw(
-                            """
-                            <button data-search="next" class="btn btn-sm btn-secondary">&darr;</button>
-                            <button data-search="prev" class="btn btn-sm btn-secondary">&uarr;</button>
-                            <button data-search="clear" class="btn btn-sm btn-secondary">✖</button>
-                            """
-                        )
+                        if not self.search == False:
+                            tag.input(_class="form-control mr-sm-2",
+                                      type="search", placeholder="Search")
+                            raw(
+                                """
+                                <button data-search="next" class="btn btn-sm btn-secondary">&darr;</button>
+                                <button data-search="prev" class="btn btn-sm btn-secondary">&uarr;</button>
+                                <button data-search="clear" class="btn btn-sm btn-secondary">✖</button>
+                                """
+                            )
 
         return str(report_head)
 
@@ -227,7 +233,7 @@ class ReportWriter:
         :param str tag_color: The severity color of the section.
         :parm str style: Allows to control the style of the div container.
             Defaults to scroll on overflow. Set to empty string to have all content show
-        :param bool title_bg: Controls if the header background or text is colored.
+        :param bool title_color: Controls if the header background or text is colored.
             Default is True and lets background color.
         :return: a jumbotron object
         :raises NotValidTag: Raises exception if a valid tag is not used
@@ -559,4 +565,3 @@ class Assets:
 # TODO: something that will allow user to loop and add content
 # TODO: make header method mandatory
 # TODO: support for py3
-# TODO: update setup.py to include py versions

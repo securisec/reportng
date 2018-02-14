@@ -3,6 +3,7 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](http://reportng.readthedocs.io/en/latest/)
 [![Read the Docs](https://img.shields.io/readthedocs/reportng.svg)]()
 [![PyPI](https://img.shields.io/pypi/v/reportng.svg)](https://pypi.python.org/pypi/reportng)
+[![PyPI version](https://img.shields.io/pypi/pyversions/reportng.svg)](https://pypi.python.org/pypi/reportng)
 ![repo size](https://img.shields.io/github/repo-size/securisec/reportng.svg)
 [![Twitter Follow](https://img.shields.io/twitter/follow/securisec.svg?style=social&label=Follow)](https://twitter.com/securisec)
 
