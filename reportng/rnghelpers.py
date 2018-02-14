@@ -135,6 +135,8 @@ class JSCustom:
                                         done: function () {
                                             $results = $content.find("mark");
                                             currentIndex = 0;
+                                            var c = document.getElementById('searchcount');
+                                            c.innerHTML = $results.length;
                                             jumpTo();
                                         }
                                     });

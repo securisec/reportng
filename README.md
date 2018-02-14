@@ -13,7 +13,7 @@ output from tools/scripts or just python in general
 
 Currently, `reportng` supports the following:
 
-- Search and highlight
+- Search and highlight (supports regex) and hit count
 - Self populating dropdown menu for report sections.
 - Code sections with lexing
 - Asciinema integration

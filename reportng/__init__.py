@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.36'
+__version__ = '0.37'
 
 
 class ReportWriter:
@@ -77,6 +77,10 @@ class ReportWriter:
             >>> r = report.report_header(theme='flatly')
         """
 
+        if len(self.report_name) > 40:
+            logging.warning('A report_name greater than 40 characters can \
+            can cause the navbar to expand and break some functionality.')
+
         with self.document.head as report_head:
             # link and script builder for bootstrap 4
             tag.comment('Created using reportng by securisec')
@@ -87,12 +91,6 @@ class ReportWriter:
             tag.script(src=rng.JSCSS.bs4_js)
             if not self.search == False:
                 tag.script(src=rng.JSCSS.mark_js)
-
-            # JS for search highlighting
-            # tag.comment('JS to highlight onkeyup')
-            # tag.script(raw(
-            #     rng.JSCustom.highlight_js
-            # ))
 
             # JS for mark_js
             tag.comment('JS for mark.js')
@@ -200,17 +198,13 @@ class ReportWriter:
                                     tag.input(_class="form-control-sm", id="ddfilter",
                                               type="text", placeholder="Filter..")
                         # highlight box form starts here
-                        # with tag.li(_class="nav-item"):
-                        #     with tag.form(_class="form-inline my-2 my-lg-0", id="form", autocomplete="off"):
-                        #         tag.input(_class="form-control mr-sm-2", type="text", placeholder="Highlight",
-                        #                   name="keyword", id="keyword", onkeyup="clickHighlight()")
-                        #         # Button is hidden
-                        #         tag.button("Highlight", _class="btn btn-secondary my-2 my-sm-0", type="button",
-                        #                    style="display: none;", name="perform", id="performbutton")
                         # input for search box
                         if not self.search == False:
                             tag.input(_class="form-control mr-sm-2",
                                       type="search", placeholder="Search")
+                            # Show search hit count
+                            tag.span("0", id="searchcount",
+                                     style="color:%s; font-size: initial; padding-right: 8; align-self: center;" % highlight_color)
                             raw(
                                 """
                                 <button data-search="next" class="btn btn-sm btn-secondary">&darr;</button>
@@ -564,4 +558,4 @@ class Assets:
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: something that will allow user to loop and add content
 # TODO: make header method mandatory
-# TODO: support for py3
+# TODO: add option to add tables

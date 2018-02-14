@@ -44,7 +44,7 @@ ReportWriter
     .. automethod:: __init__
 
 Assets
---------------
+------
 .. autoclass: reportng.Assets
     :members:
 
