@@ -21,6 +21,7 @@ Currently, `reportng` supports the following:
 - Stackable cards
 - Social integrated footers
 - Progress bar
+- Tables
 
 ## Installation
 > `pip install -U reportng`

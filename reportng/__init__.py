@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.37'
+__version__ = '0.38'
 
 
 class ReportWriter:
@@ -386,7 +386,7 @@ class ReportWriter:
         with tag.div(_class="jumbotron container context",
                      style="padding-bottom:3; padding-top:40;") as c:  # padding mods
             tag.h1(title, id="%s" % title.replace(' ', ''))
-            with tag.div(_class="container", style=" max-height: 70%; overflow: auto; margin-bottom: 20"):
+            with tag.div(_class="container", style="max-height: 70%; overflow: auto; margin-bottom: 20"):
                 tag.pre().add(tag.code(code))
         return str(c)
 
@@ -402,6 +402,70 @@ class ReportWriter:
         with tag.div(_class="container text-center", style="margin-top:-30;") as s:
             tag.p(content)
         return str(rng.HelperFunctions.convert_to_string(s))
+
+    def report_table(self, *args, **kwargs):
+        """
+        Helps create tables
+
+        :param tuple \*args: Rows of data as tuples. Ex ('data1', 'data2', ...)
+        :param str \**kwargs: Kwargs to control title, header, etc.
+        :return: A table object
+        :raises TypeError: Raises exception if not a tuple or all lenghts are not the same
+        :raises NotValidTag: If not a valid bootstrap color
+
+        Kwargs:
+            * **header** (*tuple*): The header for the table. Accepts a tuple
+            * **title** (*str*): The title of the section
+            * **section** (*bool*): Set to false to append table to previous section
+            * **header_color** (*str*): Sets the color of the header. Defaults to dark
+
+        Example showing how to change the default theme:
+            >>> r = report.report_table(('data1', 'demo1'), ('data2', 'demo2'),
+            >>>                         header=('header1', 'header2'), title='demo')
+        """
+        if kwargs.has_key('section'):
+            style = rng.CSSControl.sticky_section_css
+        else:
+            style = "padding-bottom:3; padding-top:40;"
+        if kwargs.has_key('header_color'):
+            header_color = kwargs.get('header_color')
+            if header_color not in rng.HelperFunctions.valid_tags:
+                raise rng.NotValidTag('Not a valid header color')
+        else:
+            header_color = 'dark'
+        # creates optional header
+        if kwargs.has_key('header'):
+            table_header = kwargs.get('header')
+        # Check to make sure it is args
+        if not isinstance(args, tuple):
+            raise TypeError('Not a tuple')
+        # Saves length of first arg
+        check_length = len(args[0])
+        # Run checks agains header
+        if not isinstance(table_header, tuple):
+            raise TypeError('Headers are not a tuple')
+        elif len(table_header) != check_length:
+            raise TypeError('Header not the same length as data')
+        # starts building the table
+        with tag.div(_class="jumbotron container context", style=style) as c:  # padding mods
+            if kwargs.has_key('title'):
+                tag.h1(kwargs.get('title'))
+            with tag.div(_class="container", style="overflow-x:auto; max-height: 70%; overflow: auto;"):
+                with tag.table(_class="table table-striped display nowrap", style="width: 90%") as tables:
+                    # Make table header
+                    if table_header:
+                        with tag.thead(_class="table-%s" % header_color).add(tag.tr()):
+                            for h in range(len(table_header)):
+                                tag.th(table_header[h], scope='col')
+                    for r in range(len(args)):
+                        with tag.tr():
+                            # Checks length of subsequent args with first arg
+                            if len(args[r]) != check_length:
+                                raise TypeError(
+                                    'Length of all tuples has to be the same')
+                            for t in range(len(args[r])):
+                                tag.td(args[r][t])
+        return rng.HelperFunctions.convert_to_string(c)
 
     def report_cards(self, *args, **kwargs):
         """
@@ -558,4 +622,3 @@ class Assets:
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: something that will allow user to loop and add content
 # TODO: make header method mandatory
-# TODO: add option to add tables

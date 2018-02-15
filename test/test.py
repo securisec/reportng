@@ -36,6 +36,17 @@ report += r.report_code_section(title='title', code="""
 print 'report_code'
 report += r.report_captions('test')
 print 'report_captions'
+report += r.report_table(
+    ('a data', 'b data', 'c data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data'),
+    ('a data', 'b data', 'c data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data'),
+    ('a data', 'b data', 'c data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data'),
+    ('a data', 'b data', 'c data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data'),
+    ('a data', 'b data', 'c data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data', 'e data', 'f data'),
+    header=('1st header', '2nd header', '3rd header',
+            '4th header', '5th header', '5th header', '5th header', '5th header', '5th header', '5th header',
+            '5th header',),
+    title='Tables are nonsense')
+print 'report_title'
 report += r.report_cards(
     ('primary', 'a', 'a'), ('danger', 'a', 'a'),
     section=True, title='title', border_only=True

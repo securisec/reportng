@@ -32,23 +32,13 @@ Installation
 
 Documentation
 =============
+
+.. automodule:: reportng
+    :members:
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-
-ReportWriter
-------------
-.. autoclass:: reportng.ReportWriter
-    :members:
-
-    .. automethod:: __init__
-
-Assets
-------
-.. autoclass: reportng.Assets
-    :members:
-
-    .. automethod:: download_assets
 
 
 Helpers
