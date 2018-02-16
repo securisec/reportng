@@ -46,7 +46,7 @@ report += r.report_table(
             '4th header', '5th header', '5th header', '5th header', '5th header', '5th header', '5th header',
             '5th header',),
     title='Tables are nonsense')
-print 'report_title'
+print 'report_table'
 report += r.report_cards(
     ('primary', 'a', 'a'), ('danger', 'a', 'a'),
     section=True, title='title', border_only=True

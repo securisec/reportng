@@ -48,6 +48,8 @@ All the usable methods start with the prefix _report_
 - **report_captions** is used to add a simple _p_ tag. Useful to add information below sections
 - **report_cards** is used to create stackable cards
 ![](https://github.com/securisec/reportng/blob/master/sample%20report/report_cards.png)
+- **report_table** is used to create tables
+![](https://github.com/securisec/reportng/blob/master/sample%20report/report_table.png)
 - **report_footer** is used to add an optional footer. The footer supports social icons like github, twitter etc along with custom messages.
 ![](https://github.com/securisec/reportng/blob/master/sample%20report/report_footer.png)
 - **report_save** is used to save the report to disk. 
