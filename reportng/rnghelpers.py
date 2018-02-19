@@ -184,6 +184,13 @@ class TooManyValues(Exception):
     pass
 
 
+class TableError(Exception):
+    """
+    Exception when there are problems with creating a table
+    """
+    pass
+
+
 class HelperFunctions:
     """
     Some helper functions that does not impact how enduser uses reportng

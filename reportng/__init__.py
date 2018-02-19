@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.38'
+__version__ = '0.39'
 
 
 class ReportWriter:
@@ -412,6 +412,7 @@ class ReportWriter:
         :return: A table object
         :raises TypeError: Raises exception if not a tuple or all lenghts are not the same
         :raises NotValidTag: If not a valid bootstrap color
+        :raises TableError: When there are issues creating a table
 
         Kwargs:
             * **header** (*tuple*): The header for the table. Accepts a tuple
@@ -445,11 +446,12 @@ class ReportWriter:
         if not isinstance(table_header, tuple):
             raise TypeError('Headers are not a tuple')
         elif len(table_header) != check_length:
-            raise TypeError('Header not the same length as data')
+            raise rng.TableError('Header not the same length as data')
         # starts building the table
         with tag.div(_class="jumbotron container context", style=style) as c:  # padding mods
             if kwargs.has_key('title'):
-                tag.h1(kwargs.get('title'))
+                tag.h1(kwargs.get('title'), id="%s" %
+                                               kwargs.get('title').replace(' ', ''))
             with tag.div(_class="container", style="overflow-x:auto; max-height: 70%; overflow: auto;"):
                 with tag.table(_class="table table-striped display nowrap", style="width: 90%") as tables:
                     # Make table header
@@ -461,7 +463,7 @@ class ReportWriter:
                         with tag.tr():
                             # Checks length of subsequent args with first arg
                             if len(args[r]) != check_length:
-                                raise TypeError(
+                                raise rng.TableError(
                                     'Length of all tuples has to be the same')
                             for t in range(len(args[r])):
                                 tag.td(args[r][t])
@@ -575,26 +577,26 @@ class ReportWriter:
             save.write(str(all_objects))
 
 
-class Assets:
+class DownloadAssets:
     """
-    This class is used to download and save all the css/js files locally and path them for the report
+    This method is used to download all online assests like JS/CSS locally. This method
+    also will change all the src and href links to the local files
+
+    :param str download_path: Path to save the files in
+    :param str rel_path: Relative path from where the html will be saved
+    :param str theme: The name of the bootswatch theme. Defaults to Lux
+
+    Example:
+        >>> from reportng import ReportWriter, DownloadAssets
+        >>> Assets.download_assets(save_path='/tmp/assets/', rel_path='./assets/')
+        >>> r = ReportWriter('Title', 'securisec')
     """
 
-    @staticmethod
-    def download_assets(download_path, rel_path, theme='lux'):
-        """
-        This method is used to download all online assests like JS/CSS locally. This method
-        also will change all the src and href links to the local files
+    def __init__(self, download_path, rel_path, theme='lux'):
+        self.download_path = download_path
+        self.rel_path = rel_path
+        self.theme = theme
 
-        :param str download_path: Path to save the files in
-        :param str rel_path: Relative path from where the html will be saved
-        :param str theme: The name of the bootswatch theme. Defaults to Lux
-
-        Example:
-            >>> from reportng import ReportWriter, Assets
-            >>> Assets.download_assets(save_path='/tmp/assets/', rel_path='./assets/')
-            >>> r = ReportWriter('Title', 'securisec')
-        """
         logging.warning(
             'Some files like font-awesome (all.css) does not work unless put into specific folders')
         # Check to make sure path is a dir
@@ -620,5 +622,5 @@ class Assets:
 
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture
-# TODO: something that will allow user to loop and add content
 # TODO: make header method mandatory
+# TODO: one day, maybe a webapp for reportng

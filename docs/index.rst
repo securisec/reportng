@@ -73,6 +73,7 @@ Exceptions
 .. autoexception:: reportng.rnghelpers.NotValidTag
 .. autoexception:: reportng.rnghelpers.ObjectNotInitiated
 .. autoexception:: reportng.rnghelpers.TooManyValues
+.. autoexception:: reportng.rnghelpers.TableError
 
 
 Example
