@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.39'
+__version__ = '0.40'
 
 
 class ReportWriter:
