@@ -8,7 +8,7 @@ class JSCSS:
     """
     This class controls constants that can be modified by the user and can be
     pointed to local files to host them locally. Can be used with
-    ``DownloadAssets.download_assets(path)`` to save all files locally and point them
+    ``DownloadAssets(download_path, rel_path)`` class to save all files locally and point them
     correctly
     """
 
@@ -198,16 +198,40 @@ class HelperFunctions:
 
     #: Valid options for colors/cards etc
     valid_tags = ['primary', 'secondary', 'success', 'danger',
-                  'warning', 'info', 'light', 'dark', 'default']
+                  'warning', 'info', 'light', 'dark', 'default',
+                  'red', 'green', 'blue', 'yellow']
+
+    @staticmethod
+    def color_to_tag(s):
+        """
+        Maps colors to their appropriate tags
+        """
+        if s == 'red':
+            s = 'danger'
+        elif s == 'green':
+            s = 'success'
+        elif s == 'yellow':
+            s = 'warning'
+        elif s == 'blue':
+            s = 'success'
+        else:
+            s = s
+        return s
 
     @staticmethod
     def convert_to_string(s):
+        """
+        Converts an object to string
+        """
         return '%s' % s
 
     @staticmethod
     # Function that creates to ol tags and populates with il tags for
     # carousel count indicator
     def slide_indicator(num):
+        """
+        Helper function that controls how image slide count works
+        """
         with tag.ol(_class="carousel-indicators") as o:
             for cnt in range(num):
                 if cnt == 0:
@@ -221,6 +245,9 @@ class HelperFunctions:
     @staticmethod
     # Function to create the cards
     def make_cards(b_only, k, h, v):
+        """
+        Helper function that helps making cards
+        """
         if k not in HelperFunctions.valid_tags:
             raise NotValidTag, '\n\n%s is not a valid tag. \nChoose one of the following: \n%s' % (
                 k, '\n'.join([x for x in HelperFunctions.valid_tags]))
@@ -231,7 +258,8 @@ class HelperFunctions:
         else:
             style = 'bg'
             text = 'text-white'
-        with tag.div(_class="card %s %s-%s m-3" % (text, style, k), style="width: 20rem;") as m:
+        with tag.div(_class="card %s %s-%s m-3" % (text, style, HelperFunctions.color_to_tag(k)),
+                     style="width: 20rem;") as m:
             tag.div(h, _class='card-header')
             with tag.div(_class="card-body"):
                 tag.p(v, _class="card-text")

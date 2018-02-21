@@ -17,12 +17,11 @@ from dominate.util import raw
 
 # ugly way to address unicode encode issues
 import sys
-
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.40'
+__version__ = '0.41'
 
 
 class ReportWriter:
@@ -225,7 +224,7 @@ class ReportWriter:
             Set to False to use p tag
         :param str content: The content for this section
         :param str tag_color: The severity color of the section.
-        :parm str style: Allows to control the style of the div container.
+        :parm str overflow: Allows to control the style of the div container.
             Defaults to scroll on overflow. Set to empty string to have all content show
         :param bool title_color: Controls if the header background or text is colored.
             Default is True and lets background color.
@@ -251,7 +250,7 @@ class ReportWriter:
                      style=rng.CSSControl.jumbotron_style) as r:  # padding mods
             # can change the text color, or the background color
             tag.h1(title, _class="%s-%s" %
-                                 (color, tag_color), id="%s" % title.replace(' ', ''))
+                                 (color, rng.HelperFunctions.color_to_tag(tag_color)), id="%s" % title.replace(' ', ''))
             with tag.div(_class="container", style=overflow):
                 if pre_tag:
                     tag.pre(content)
@@ -264,7 +263,7 @@ class ReportWriter:
         Is used to create an image carousel with optional captions
 
         :param str \**args: A list of image paths
-        :param \**kwargs: Kwargs handle image captions and must be in the same order as args
+        :param str \**kwargs: Kwargs handle image captions and must be in the same order as args
         :return: image jumbotron carousel container
         :raises IndexError: If the number of kwargs is not equal to args
 

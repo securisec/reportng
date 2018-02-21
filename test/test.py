@@ -18,7 +18,7 @@ content = """
     # 아름다운
     # 你好""" * 100
 report += r.report_section(title='title', content=content, pre_tag=True,
-                           tag_color='danger', title_color=False)
+                           tag_color='red', title_color=False)
 print 'report_section1'
 report += r.report_section(title='title', content=content, pre_tag=True,
                            tag_color='danger', title_color=False, overflow='')
