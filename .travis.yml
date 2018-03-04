@@ -8,6 +8,6 @@ install:
 
 script:
   - "python -V"
-  - 'python -c "import dominate; print dominate.document()"'
+  - 'python -c "import dominate; print(dominate.document())"'
   - "python ./test/test.py"
   - "ls -la */*"
