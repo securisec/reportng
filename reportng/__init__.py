@@ -32,7 +32,7 @@ class ReportWriter:
     theme, brand and highlight_color
 
     Example with enabling code highlighting:
-        >>> r = reporng.ReportWriter('my report', 'securisec', code_highligh=True)
+        >>> r = reporng.ReportWriter('my report', 'securisec', code=True)
     """
 
     def __init__(self, report_name, brand, **kwargs):
@@ -45,8 +45,8 @@ class ReportWriter:
 
         Kwargs:
             * **asciinema** (*bool*): Set to true to use asciinema's in report. Default is False
-            * **code_highlight** (*bool*): Set to True in order to use code highlighting
-            * **progress_bar** (*bool*): Set to True to enable the progress bar
+            * **code** (*bool*): Set to True in order to use code highlighting
+            * **pbar** (*bool*): Set to True to enable the progress bar
             * **search** (*bool*): Set to False to disable search and highlight
 
         Example:
@@ -58,8 +58,8 @@ class ReportWriter:
         self.brand = brand
         self.document = dominate.document(title=self.report_name)
         self.asciinema = kwargs.get('asciinema')
-        self.code_highlight = kwargs.get('code_highlight')
-        self.progress_bar = kwargs.get('progress_bar')
+        self.code = kwargs.get('code')
+        self.pbar = kwargs.get('pbar')
         self.search = kwargs.get('search')
 
     def report_header(self, theme='lux', highlight_color='#f1c40f', **kwargs):
@@ -142,7 +142,7 @@ class ReportWriter:
                          href=rng.JSCSS.asciinema_css)
 
             # css and js for highlight.js
-            if self.code_highlight == True:
+            if self.code == True:
                 tag.comment('css and js for highlight.js')
                 tag.link(rel="stylesheet", href=rng.JSCSS.highlightjs_css)
                 tag.script(src=rng.JSCSS.highlightjs_js)
@@ -153,7 +153,7 @@ class ReportWriter:
                 ))
 
             # script for progress bar
-            if self.progress_bar == True:
+            if self.pbar == True:
                 tag.comment('js for progress bar')
                 tag.script(
                     src=rng.JSCSS.progressbar_js)
@@ -217,7 +217,8 @@ class ReportWriter:
         return str(report_head)
 
     def report_section(self, title, content, pre_tag=True, tag_color='default',
-                       title_color=True, overflow=rng.CSSControl.css_overflow):
+                       title_color=True, overflow=rng.CSSControl.css_overflow,
+                       **kwargs):
         """
         This form the main body of the report
 
@@ -230,6 +231,11 @@ class ReportWriter:
             Defaults to scroll on overflow. Set to empty string to have all content show
         :param bool title_color: Controls if the header background or text is colored.
             Default is True and lets background color.
+
+        Kwargs:
+            * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
+                the color, and the second is the message
+
         :return: a jumbotron object
         :raises NotValidTag: Raises exception if a valid tag is not used
 
@@ -253,6 +259,9 @@ class ReportWriter:
             # can change the text color, or the background color
             tag.h1(title, _class="%s-%s" %
                                  (color, rng.HelperFunctions.color_to_tag(tag_color)), id="%s" % title.replace(' ', ''))
+            # create dismissable alert box
+            if 'alert' in kwargs:
+                rng.HelperFunctions.make_alert(kwargs.get('alert'))
             with tag.div(_class="container", style=overflow):
                 if pre_tag:
                     tag.pre(content)
@@ -321,7 +330,7 @@ class ReportWriter:
                         tag.span("Next", _class="sr-only")
         return str(i)
 
-    def report_asciinema(self, asciinema_link, title=''):
+    def report_asciinema(self, asciinema_link, title='', **kwargs):
         """
         Section creates a jumbotron to house an asciinema
 
@@ -329,6 +338,9 @@ class ReportWriter:
         :param str title: Set the title of the asciinema. If set, it will create its own section.
             If not, it will append to previous section
         :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
+
+        * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
+                the color, and the second is the message
 
         Example:
             >>> r += report.report_asciinema('https://asciinema.org/a/XvEb7StzQ3C1BAAlvn9CDvqLR', title='asciinema')
@@ -359,6 +371,9 @@ class ReportWriter:
                      style=style) as a:
             if title != '':
                 tag.h1(title, id="%s" % title.replace(' ', ''))
+            # create dismissable alert box
+            if 'alert' in kwargs:
+                rng.HelperFunctions.make_alert(kwargs.get('alert'))
             with tag.div(_class="container", style="text-align: center;"):
                 raw('<asciinema-player src="%s"></asciinema-player>' % url)
                 tag.script(
@@ -367,7 +382,7 @@ class ReportWriter:
                       role="button", href=asciinema_link, target="_blank")
         return str(a)
 
-    def report_code_section(self, title, code):
+    def report_code_section(self, title, code, **kwargs):
         """
         This section can use used to add code containers that will be lexed and highlighted using highlight.js
 
@@ -376,22 +391,28 @@ class ReportWriter:
         :return: a string code section
         :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
 
+        * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
+                the color, and the second is the message
+
         Example of how to get code from file:
             >>> with open('somefile.py', 'r') as f:
             >>>     data = f.read()
             >>> r += report_code_section('my py code', data)
         """
-        if not self.code_highlight:
+        if not self.code:
             raise rng.ObjectNotInitiated(
-                'To integrate code highlighting, set code_highlight=True in ReportWriter')
+                'To integrate code highlighting, set code=True in ReportWriter')
         with tag.div(_class="jumbotron container context",
                      style="padding-bottom:3; padding-top:40;") as c:  # padding mods
             tag.h1(title, id="%s" % title.replace(' ', ''))
+            # create dismissable alert box
+            if 'alert' in kwargs:
+                rng.HelperFunctions.make_alert(kwargs.get('alert'))
             with tag.div(_class="container", style="max-height: 70%; overflow: auto; margin-bottom: 20"):
                 tag.pre().add(tag.code(code))
         return str(c)
 
-    def report_captions(self, content):
+    def report_captions(self, content, **kwargs):
         """
         Simple method to added some center aligned text.
 
@@ -400,7 +421,11 @@ class ReportWriter:
         Example:
             >>> r += report_captions('This is my caption')
         """
-        with tag.div(_class="container text-center", style="margin-top:-30;") as s:
+        if 'section' in kwargs:
+            style = rng.CSSControl.sticky_section_css
+        else:
+            style = "margin-top:-30;"
+        with tag.div(_class="container text-center", style=style) as s:
             tag.p(content)
         return str(rng.HelperFunctions.convert_to_string(s))
 
@@ -420,6 +445,8 @@ class ReportWriter:
             * **title** (*str*): The title of the section
             * **section** (*bool*): Set to false to append table to previous section
             * **header_color** (*str*): Sets the color of the header. Defaults to dark
+            * **alert** (*tuple*): Creats a dismissable alert box. Requires a tuple. First
+                value is color and second value is message.
 
         Example showing how to change the default theme:
             >>> r = report.report_table(('data1', 'demo1'), ('data2', 'demo2'),
@@ -453,6 +480,9 @@ class ReportWriter:
             if 'title' in kwargs:
                 tag.h1(kwargs.get('title'), id="%s" %
                                                kwargs.get('title').replace(' ', ''))
+            # create dismissable alert box
+            if 'alert' in kwargs:
+                rng.HelperFunctions.make_alert(kwargs.get('alert'))
             with tag.div(_class="container", style="overflow-x:auto; max-height: 70%; overflow: auto;"):
                 with tag.table(_class="table table-striped display nowrap", style="width: 90%") as tables:
                     # Make table header
@@ -486,6 +516,8 @@ class ReportWriter:
             * **section** (*bool*) - Set to True to append the cards section to the preceding section. Default is false
             * **title** (*str*) - Sets an optional title for cards
             * **border_only** (*bool*) - Changes the look of the cards
+            * **alert** (*tuple*) - Creates a dismissable alert box. Requires a tuple. First
+                value is color and second value is message.
 
         Example:
             >>> r += report_cards(('primary', 'header1', 'some text'),
@@ -513,6 +545,9 @@ class ReportWriter:
                      style=style) as c:  # padding mods
             if 'title' in kwargs:
                 tag.h1(kwargs.get('title'))
+            # create dismissable alert box
+            if 'alert' in kwargs:
+                rng.HelperFunctions.make_alert(kwargs.get('alert'))
             with tag.div(_class="row justify-content-center"):
                 for i in range(len(args)):
                     # Checks to make sure corrent number of values in tuple
@@ -643,7 +678,7 @@ class DownloadAssets:
                     logging.info('Downloaded %s to %s' % (v, download_path))
                     setattr(rng.JSCSS, k, rel_path + local_file)
 
-
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: make header method mandatory
+

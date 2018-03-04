@@ -2,6 +2,7 @@
 Helper module for reportng
 """
 import dominate.tags as tag
+from dominate.util import raw
 
 
 class JSCSS:
@@ -264,3 +265,18 @@ class HelperFunctions:
             with tag.div(_class="card-body"):
                 tag.p(v, _class="card-text")
         return m
+
+    @staticmethod
+    # Function to create alerts in sections
+    def make_alert(*args):
+        """
+        Helper function that creates dismissable alerts
+        """
+        if len(args[0]) == 2 and isinstance(args, tuple):
+            color = args[0][0]
+            message = args[0][1]
+            with tag.div(message, _class="alert alert-dismissible alert-%s" % HelperFunctions.color_to_tag(color)) as a:
+                raw('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+        else:
+            raise NotValidTag('Use two values in the tuple')
+        return a
