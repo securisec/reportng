@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.44'
+__version__ = '0.45'
 
 
 class ReportWriter:
