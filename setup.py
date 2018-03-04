@@ -13,7 +13,7 @@ setup(
     download_url='https://github.com/securisec/reportng/archive/0.43.tar.gz',
     keywords=['report', 'reporting', 'bootstrap'],
     classifiers=['Programming Language :: Python :: 2.7',
-                 'Programming Language :: Python :: 3.6.14',
+                 'Programming Language :: Python :: 3.6',
                  'Natural Language :: English',
                  ],
     install_requires=[
