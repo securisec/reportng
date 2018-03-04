@@ -9,7 +9,6 @@ import os
 import logging
 from requests import get
 from collections import OrderedDict
-import rnghelpers as rng
 
 import dominate
 import dominate.tags as tag
@@ -17,13 +16,15 @@ from dominate.util import raw
 
 # ugly way to address unicode encode issues
 import sys
-
 if sys.version[0] == '2':
     reload(sys)
     sys.setdefaultencoding('utf-8')
+    import rnghelpers as rng
+elif sys.version[0] == '3':
+    from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.42'
+__version__ = '0.43'
 
 
 class ReportWriter:
