@@ -249,8 +249,8 @@ class HelperFunctions:
         Helper function that helps making cards
         """
         if k not in HelperFunctions.valid_tags:
-            raise NotValidTag, '\n\n%s is not a valid tag. \nChoose one of the following: \n%s' % (
-                k, '\n'.join([x for x in HelperFunctions.valid_tags]))
+            raise NotValidTag('\n\n%s is not a valid tag. \nChoose one of the following: \n%s' % (
+                k, '\n'.join([x for x in HelperFunctions.valid_tags])))
         # checks bool and determines styling
         if b_only:
             style = 'border'

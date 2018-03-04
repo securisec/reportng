@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 """
 Python report generator that wraps around bootstrap 4 using dominate.
 Usage is simple. Follows header, section..., footer structure. reportng
@@ -7,7 +7,7 @@ using modern browsers.
 """
 import os
 import logging
-import urllib2
+from requests import get
 from collections import OrderedDict
 import rnghelpers as rng
 
@@ -17,11 +17,13 @@ from dominate.util import raw
 
 # ugly way to address unicode encode issues
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+
+if sys.version[0] == '2':
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
 
 __author__ = 'securisec'
-__version__ = '0.41'
+__version__ = '0.42'
 
 
 class ReportWriter:
@@ -117,7 +119,7 @@ class ReportWriter:
             ))
 
             # user insterted JS
-            if kwargs.has_key('script'):
+            if 'script' in kwargs:
                 tag.comment('User inserted JS')
                 tag.script(raw(
                     kwargs.get('script')
@@ -224,7 +226,7 @@ class ReportWriter:
             Set to False to use p tag
         :param str content: The content for this section
         :param str tag_color: The severity color of the section.
-        :parm str overflow: Allows to control the style of the div container.
+        :param str overflow: Allows to control the style of the div container.
             Defaults to scroll on overflow. Set to empty string to have all content show
         :param bool title_color: Controls if the header background or text is colored.
             Default is True and lets background color.
@@ -273,7 +275,7 @@ class ReportWriter:
         """
         # dict order for image captions
         if kwargs:
-            ordered_kwargs = OrderedDict(kwargs).values()
+            ordered_kwargs = list(OrderedDict(kwargs).values())
         # create jumbotron container
         with tag.div(_class="jumbotron jumbomargin container",
                      style=rng.CSSControl.sticky_section_css) as i:
@@ -342,8 +344,8 @@ class ReportWriter:
 
         # hacky way to bypass the CORS problem
         try:
-            url = urllib2.urlopen('%s.json' % asciinema_link).geturl()
-        except urllib2.URLError:
+            url = get('%s.json' % asciinema_link).url
+        except:
             logging.warning(
                 'Need internet to get the proper url for %s' % asciinema_link)
 
@@ -423,18 +425,18 @@ class ReportWriter:
             >>> r = report.report_table(('data1', 'demo1'), ('data2', 'demo2'),
             >>>                         header=('header1', 'header2'), title='demo')
         """
-        if kwargs.has_key('section'):
+        if 'section' in kwargs:
             style = rng.CSSControl.sticky_section_css
         else:
             style = "padding-bottom:3; padding-top:40;"
-        if kwargs.has_key('header_color'):
+        if 'header_color' in kwargs:
             header_color = kwargs.get('header_color')
             if header_color not in rng.HelperFunctions.valid_tags:
                 raise rng.NotValidTag('Not a valid header color')
         else:
             header_color = 'dark'
         # creates optional header
-        if kwargs.has_key('header'):
+        if 'header' in kwargs:
             table_header = kwargs.get('header')
         # Check to make sure it is args
         if not isinstance(args, tuple):
@@ -448,7 +450,7 @@ class ReportWriter:
             raise rng.TableError('Header not the same length as data')
         # starts building the table
         with tag.div(_class="jumbotron container context", style=style) as c:  # padding mods
-            if kwargs.has_key('title'):
+            if 'title' in kwargs:
                 tag.h1(kwargs.get('title'), id="%s" %
                                                kwargs.get('title').replace(' ', ''))
             with tag.div(_class="container", style="overflow-x:auto; max-height: 70%; overflow: auto;"):
@@ -475,6 +477,7 @@ class ReportWriter:
         :param tuple \**args: Tuples that creates cards. The first value of the
             tuple is used to color the card, second value is the header for the
             card and the third is passed to a p tag for content
+        * tuple values : Are in order fo ('color', 'title', 'content')
         :param \**kwargs: See valid keys in documentation
         :raises TypeError: Raises TypeError if args is not a tuple
         :raises TooManyValues: Raises exception when the number of values in tuple is not 3
@@ -495,20 +498,20 @@ class ReportWriter:
             raise TypeError('Use tuples only')
 
         # if the kwarg border exists, this set bool value
-        if kwargs.has_key('border_only'):
+        if 'border_only' in kwargs:
             border = True
         else:
             border = False
 
         # control if stick to previous section or not
-        if kwargs.has_key('section'):
+        if 'section' in kwargs:
             style = rng.CSSControl.sticky_section_css
         else:
             style = "padding-bottom:3; padding-top:40;"
 
         with tag.div(_class="jumbotron container context",
                      style=style) as c:  # padding mods
-            if kwargs.has_key('title'):
+            if 'title' in kwargs:
                 tag.h1(kwargs.get('title'))
             with tag.div(_class="row justify-content-center"):
                 for i in range(len(args)):
@@ -544,7 +547,7 @@ class ReportWriter:
                 with tag.div(_class="row"):
                     with tag.div(_class="mb-4"):
                         # Looks through valid kwargs and creates appropiate a tag
-                        for key, value in sorted(kwargs.iteritems()):
+                        for key, value in sorted(kwargs.items()):
                             if key == 'twitter':
                                 tag.a(_class="icons-sm tw-ic", href=value, target="_blank").add(
                                     tag.i(_class="fab fa-twitter fa-2x white-text mr-md-4"))
@@ -576,9 +579,32 @@ class ReportWriter:
             save.write(str(all_objects))
 
 
+class LocalAssets:
+    """
+    This class allows one to map locally available asset files automatically.
+    Themes are dicated by the locally available file
+
+    :param str rel_path: The relative path from the report file. Usally is ./assets/
+
+    Example:
+        >>> from reportng import ReportWriter, LocalAssets
+        >>> LocalAssets(rel_path='/tmp/assets/')
+        >>> r = ReportWriter('Title', 'securisec')
+    """
+
+    def __init__(self, rel_path):
+        self.rel_path = rel_path
+
+        change = vars(rng.JSCSS)
+        for k, v in change.items():
+            if not '__' in k:
+                local_file = v.split('/')[-1]
+                change[k] = rel_path + local_file
+
+
 class DownloadAssets:
     """
-    This method is used to download all online assests like JS/CSS locally. This method
+    This class is used to download all online assests like JS/CSS locally. This method
     also will change all the src and href links to the local files
 
     :param str download_path: Path to save the files in
@@ -587,7 +613,7 @@ class DownloadAssets:
 
     Example:
         >>> from reportng import ReportWriter, DownloadAssets
-        >>> Assets.download_assets(save_path='/tmp/assets/', rel_path='./assets/')
+        >>> DownloadAssets(save_path='/tmp/assets/', rel_path='./assets/')
         >>> r = ReportWriter('Title', 'securisec')
     """
 
@@ -602,7 +628,7 @@ class DownloadAssets:
         if not os.path.isdir(download_path):
             raise TypeError('Path is not a directory')
 
-        change = vars(rng.JSCSS)
+        change = dict(vars(rng.JSCSS))
         for k, v in change.items():
             if not '__' in k:
                 local_file = v.split('/')[-1]
@@ -610,11 +636,10 @@ class DownloadAssets:
                     if 'https://bootswatch.com/4/' in v:
                         v = v.replace('lux', theme)
                         local_file = v.split('/')[-1]
-                    response = urllib2.build_opener()
-                    response.addheaders = [('User-Agent',
-                                            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 \
-                                            (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36')]
-                    f.write(response.open(v).read())
+                    headers = {
+                        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+                    }
+                    f.write(get(v).text)
                     logging.info('Downloaded %s to %s' % (v, download_path))
                     change[k] = rel_path + local_file
 
@@ -622,4 +647,3 @@ class DownloadAssets:
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: make header method mandatory
-# TODO: one day, maybe a webapp for reportng
