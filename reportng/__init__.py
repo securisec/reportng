@@ -9,7 +9,7 @@ import os
 import logging
 from requests import get
 from collections import OrderedDict
-
+import rnghelpers as rng
 import dominate
 import dominate.tags as tag
 from dominate.util import raw
@@ -20,11 +20,11 @@ if sys.version[0] == '2':
     reload(sys)
     sys.setdefaultencoding('utf-8')
     import rnghelpers as rng
-elif sys.version[0] == '3':
-    from . import rnghelpers as rng
+# elif sys.version[0] == '3':
+#     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.43'
+__version__ = '0.44'
 
 
 class ReportWriter:
@@ -600,7 +600,7 @@ class LocalAssets:
         for k, v in change.items():
             if not '__' in k:
                 local_file = v.split('/')[-1]
-                change[k] = rel_path + local_file
+                setattr(rng.JSCSS, k, rel_path + local_file)
 
 
 class DownloadAssets:
@@ -629,7 +629,7 @@ class DownloadAssets:
         if not os.path.isdir(download_path):
             raise TypeError('Path is not a directory')
 
-        change = dict(vars(rng.JSCSS))
+        change = vars(rng.JSCSS)
         for k, v in change.items():
             if not '__' in k:
                 local_file = v.split('/')[-1]
@@ -640,9 +640,9 @@ class DownloadAssets:
                     headers = {
                         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
                     }
-                    f.write(get(v).text)
+                    f.write(get(v, headers=headers).text)
                     logging.info('Downloaded %s to %s' % (v, download_path))
-                    change[k] = rel_path + local_file
+                    setattr(rng.JSCSS, k, rel_path + local_file)
 
 
 # TODO: add a brand image that is resized with the navbar
