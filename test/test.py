@@ -58,5 +58,4 @@ report += r.report_cards(
 print('report_cards')
 report += r.report_footer(message='message', github='a',
                           linkedin='a', email='a', twitter='a', alert=('green', 'some message here'))
-r.report_save(report, 'test.html')
-
+r.report_save('test.html', report)
