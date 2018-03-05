@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.46'
+__version__ = '0.47'
 
 
 class ReportWriter:
@@ -193,7 +193,7 @@ class ReportWriter:
                                 tag.button('sections', _class="btn btn-secondary btn-block dropdown-toggle",
                                            type="button", id="dropdownMenuButton", data_toggle="dropdown",
                                            aria_haspopup="true", aria_expanded="false")
-                                with tag.ul(_class="dropdown-menu",
+                                with tag.ul(_class="dropdown-menu dropdown-menu-right",
                                             aria_labelledby="dropdownMenuButton", id="ddmenu"):
                                     # input box for filtering dropdown
                                     tag.input(_class="form-control-sm", id="ddfilter",
@@ -345,8 +345,11 @@ class ReportWriter:
             If not, it will append to previous section
         :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
 
-        * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
-                the color, and the second is the message
+        Kwargs:
+            * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
+                    the color, and the second is the message
+            * **section** (*bool*) - Set to True to append the cards section to the preceding
+                section. Default is false
 
         Example:
             >>> r += report.report_asciinema('https://asciinema.org/a/XvEb7StzQ3C1BAAlvn9CDvqLR', title='asciinema')
@@ -367,11 +370,11 @@ class ReportWriter:
             logging.warning(
                 'Need internet to get the proper url for %s' % asciinema_link)
 
-        # adjusts section padding if h1 is to be set or not
-        if title != '':
-            style = rng.CSSControl.jumbotron_style
-        else:
+        # controls if sticky or not
+        if 'section' in kwargs:
             style = rng.CSSControl.sticky_section_css
+        else:
+            style = rng.CSSControl.not_sticky_section
 
         with tag.div(_class="jumbotron jumbomargin container",
                      style=style) as a:
@@ -380,7 +383,7 @@ class ReportWriter:
             # create dismissable alert box
             if 'alert' in kwargs:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
-            with tag.div(_class="container", style="text-align: center;"):
+            with tag.div(_class="container", style="text-align: center;" + style):
                 raw('<asciinema-player src="%s"></asciinema-player>' % url)
                 tag.script(
                     src=rng.JSCSS.asciinema_js)
@@ -398,6 +401,8 @@ class ReportWriter:
         :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
 
         Kwargs:
+            * **section** (*bool*) - Set to True to append the cards section to the preceding
+                 section. Default is false
             * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
                     the color, and the second is the message
             * **reference** (*tuple*): Adds a small button which hrefs to a user supplied link.
@@ -411,13 +416,15 @@ class ReportWriter:
         if not self.code:
             raise rng.ObjectNotInitiated(
                 'To integrate code highlighting, set code=True in ReportWriter')
+        if 'section' in kwargs:
+            style = rng.CSSControl.sticky_section_css
+        else:
+            style = rng.CSSControl.not_sticky_section
         with tag.div(_class="jumbotron container context",
-                     style="padding-bottom:3; padding-top:40;") as c:  # padding mods
+                     style=style) as c:  # padding mods
+            t = tag.h1(title, id="%s" % title.replace(' ', ''))
             if 'reference' in kwargs:
-                tag.h1(title, id="%s" % title.replace(' ', '')).add(
-                    rng.HelperFunctions.ref_button(kwargs.get('reference')))
-            else:
-                tag.h1(title, id="%s" % title.replace(' ', ''))
+                t.add(rng.HelperFunctions.ref_button(kwargs.get('reference')))
             # create dismissable alert box
             if 'alert' in kwargs:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
@@ -458,6 +465,7 @@ class ReportWriter:
             * **title** (*str*): The title of the section
             * **section** (*bool*): Set to false to append table to previous section
             * **header_color** (*str*): Sets the color of the header. Defaults to dark
+            * **tindex** (*bool*): Sets the color of the header. Defaults to dark
             * **alert** (*tuple*): Creats a dismissable alert box. Requires a tuple. First
                 value is color and second value is message.
 
@@ -497,15 +505,19 @@ class ReportWriter:
             if 'alert' in kwargs:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
             with tag.div(_class="container", style="overflow-x:auto; max-height: 70%; overflow: auto;"):
-                with tag.table(_class="table table-striped display nowrap", style="width: 90%") as tables:
+                with tag.table(_class="table table-striped display nowrap table-hover", style="width: 90%") as tables:
                     # Make table header
                     if table_header:
                         with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(
                                 tag.tr()):
+                            if kwargs.get('tindex') == True:
+                                tag.th('Index')
                             for h in range(len(table_header)):
                                 tag.th(table_header[h], scope='col')
                     for r in range(len(args)):
                         with tag.tr():
+                            if kwargs.get('tindex') == True:
+                                tag.td(str(r + 1))
                             # Checks length of subsequent args with first arg
                             if len(args[r]) != check_length:
                                 raise rng.TableError(
@@ -553,7 +565,7 @@ class ReportWriter:
         if 'section' in kwargs:
             style = rng.CSSControl.sticky_section_css
         else:
-            style = "padding-bottom:3; padding-top:40;"
+            style = rng.CSSControl.not_sticky_section
 
         with tag.div(_class="jumbotron container context",
                      style=style) as c:  # padding mods
@@ -614,7 +626,7 @@ class ReportWriter:
 
         return str(footer)
 
-    def report_save(self, all_objects, path):
+    def report_save(self, path, all_objects):
         """
         Saves the html file to disk
 
@@ -628,48 +640,46 @@ class ReportWriter:
             save.write(str(all_objects))
 
 
-class LocalAssets:
+class Assets:
     """
-    This class allows one to map locally available asset files automatically.
-    Themes are dicated by the locally available file
-
-    :param str rel_path: The relative path from the report file. Usally is ./assets/
-
-    Example:
-        >>> from reportng import ReportWriter, LocalAssets
-        >>> LocalAssets(rel_path='/tmp/assets/')
-        >>> r = ReportWriter('Title', 'securisec')
+    Assets allows one to either download and map all dependent CSS and JS files, or
+    use existing CSS and JS files
     """
 
-    def __init__(self, rel_path):
-        self.rel_path = rel_path
+    @staticmethod
+    def local(rel_path):
+        """
+        This method allows one to map locally available asset files automatically.
+        Themes are dicated by the locally available file
 
+        :param str rel_path: The relative path from the report file. Usally is ./assets/
+
+        Example:
+            >>> from reportng import ReportWriter, Assets
+            >>> Assets.local(rel_path='/tmp/assets/')
+            >>> r = ReportWriter('Title', 'securisec')
+        """
         change = vars(rng.JSCSS)
         for k, v in change.items():
             if not '__' in k:
                 local_file = v.split('/')[-1]
                 setattr(rng.JSCSS, k, rel_path + local_file)
 
+    @staticmethod
+    def download(download_path, rel_path, theme='lux'):
+        """
+        This method is used to download all online assests like JS/CSS locally. This method
+        also will change all the src and href links to the local files
 
-class DownloadAssets:
-    """
-    This class is used to download all online assests like JS/CSS locally. This method
-    also will change all the src and href links to the local files
+        :param str download_path: Path to save the files in
+        :param str rel_path: Relative path from where the html will be saved
+        :param str theme: The name of the bootswatch theme. Defaults to Lux
 
-    :param str download_path: Path to save the files in
-    :param str rel_path: Relative path from where the html will be saved
-    :param str theme: The name of the bootswatch theme. Defaults to Lux
-
-    Example:
-        >>> from reportng import ReportWriter, DownloadAssets
-        >>> DownloadAssets(save_path='/tmp/assets/', rel_path='./assets/')
-        >>> r = ReportWriter('Title', 'securisec')
-    """
-
-    def __init__(self, download_path, rel_path, theme='lux'):
-        self.download_path = download_path
-        self.rel_path = rel_path
-        self.theme = theme
+        Example:
+            >>> from reportng import ReportWriter, Assets
+            >>> Assets.download(save_path='/tmp/assets/', rel_path='./assets/')
+            >>> r = ReportWriter('Title', 'securisec')
+        """
 
         logging.warning(
             'Some files like font-awesome (all.css) does not work unless put into specific folders')
@@ -692,6 +702,8 @@ class DownloadAssets:
                     logging.info('Downloaded %s to %s' % (v, download_path))
                     setattr(rng.JSCSS, k, rel_path + local_file)
 
+
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: make header method mandatory
+# TODO: weird how the title of the code section is getting outside

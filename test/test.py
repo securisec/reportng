@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import reportng
+import os
 
-reportng.DownloadAssets(download_path='./', rel_path='./', theme='pulse')
+os.mkdir('dtest')
+
+reportng.Assets.download(download_path='./dtest', rel_path='./dtest', theme='pulse')
 print('download_assets')
 
 

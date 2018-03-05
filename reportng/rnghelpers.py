@@ -48,6 +48,8 @@ class CSSControl:
     jumbotron_style = "padding-bottom:3; padding-top:40"
     #: sticky_section_css: Controls if section should sticky with preceeding section
     sticky_section_css = "padding:0; margin-top:-2rem;"
+    #: not_stick_section: Controls if the section is not a sticky
+    not_sticky_section = "padding-bottom:3; padding-top:40;"
 
 
 class JSCustom:
