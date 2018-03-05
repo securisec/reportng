@@ -69,7 +69,7 @@ class JSCustom:
                         var a = document.createElement("a")
                         a.setAttribute("class", "dropdown-item " + headings[i].className);
                         a.setAttribute("href", "#" + headings[i].id)
-                        a.innerHTML = headings[i].innerHTML;
+                        a.innerHTML = headings[i].innerText;
                         select.appendChild(a);
                     }
                 }
@@ -214,7 +214,7 @@ class HelperFunctions:
         elif s == 'yellow':
             s = 'warning'
         elif s == 'blue':
-            s = 'success'
+            s = 'info'
         else:
             s = s
         return s
@@ -280,3 +280,17 @@ class HelperFunctions:
         else:
             raise NotValidTag('Use two values in the tuple')
         return a
+
+    @staticmethod
+    def ref_button(*args):
+        """
+        Places a button with href on it.
+        """
+        if len(args[0]) == 2 and isinstance(args, tuple):
+            color = args[0][0]
+            link = args[0][1]
+            b = tag.a("Reference", _class="btn btn-outline-%s btn-sm float-right" % HelperFunctions.color_to_tag(color),
+                      href=link, role="button", target='_blank')
+            return b
+        else:
+            raise NotValidTag('Use two values in the tuple')

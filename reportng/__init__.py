@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.45'
+__version__ = '0.46'
 
 
 class ReportWriter:
@@ -235,6 +235,8 @@ class ReportWriter:
         Kwargs:
             * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
                 the color, and the second is the message
+            * **reference** (*tuple*): Adds a small button which hrefs to a user supplied link.
+                Is a tuple. First value is color, second is link
 
         :return: a jumbotron object
         :raises NotValidTag: Raises exception if a valid tag is not used
@@ -257,11 +259,15 @@ class ReportWriter:
         with tag.div(_class="jumbotron container context",
                      style=rng.CSSControl.jumbotron_style) as r:  # padding mods
             # can change the text color, or the background color
-            tag.h1(title, _class="%s-%s" %
-                                 (color, rng.HelperFunctions.color_to_tag(tag_color)), id="%s" % title.replace(' ', ''))
-            # create dismissable alert box
+            t = tag.h1(title, _class="%s-%s" %
+                                     (color, rng.HelperFunctions.color_to_tag(tag_color)),
+                       id="%s" % title.replace(' ', ''))
+            if 'reference' in kwargs:
+                t.add(rng.HelperFunctions.ref_button(kwargs.get('reference')))
+            # creates dismissable alert box
             if 'alert' in kwargs:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
+            # creates a reference button with link
             with tag.div(_class="container", style=overflow):
                 if pre_tag:
                     tag.pre(content)
@@ -391,8 +397,11 @@ class ReportWriter:
         :return: a string code section
         :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
 
-        * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
-                the color, and the second is the message
+        Kwargs:
+            * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
+                    the color, and the second is the message
+            * **reference** (*tuple*): Adds a small button which hrefs to a user supplied link.
+                Is a tuple. First value is color, second is link
 
         Example of how to get code from file:
             >>> with open('somefile.py', 'r') as f:
@@ -404,7 +413,11 @@ class ReportWriter:
                 'To integrate code highlighting, set code=True in ReportWriter')
         with tag.div(_class="jumbotron container context",
                      style="padding-bottom:3; padding-top:40;") as c:  # padding mods
-            tag.h1(title, id="%s" % title.replace(' ', ''))
+            if 'reference' in kwargs:
+                tag.h1(title, id="%s" % title.replace(' ', '')).add(
+                    rng.HelperFunctions.ref_button(kwargs.get('reference')))
+            else:
+                tag.h1(title, id="%s" % title.replace(' ', ''))
             # create dismissable alert box
             if 'alert' in kwargs:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
@@ -487,7 +500,8 @@ class ReportWriter:
                 with tag.table(_class="table table-striped display nowrap", style="width: 90%") as tables:
                     # Make table header
                     if table_header:
-                        with tag.thead(_class="table-%s" % header_color).add(tag.tr()):
+                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(
+                                tag.tr()):
                             for h in range(len(table_header)):
                                 tag.th(table_header[h], scope='col')
                     for r in range(len(args)):
@@ -681,4 +695,3 @@ class DownloadAssets:
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture
 # TODO: make header method mandatory
-
