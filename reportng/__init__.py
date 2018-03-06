@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.47'
+__version__ = '0.48'
 
 
 class ReportWriter:
@@ -237,6 +237,7 @@ class ReportWriter:
                 the color, and the second is the message
             * **reference** (*tuple*): Adds a small button which hrefs to a user supplied link.
                 Is a tuple. First value is color, second is link
+            * **badge** (*dict*): Adds badges. Key is the color, and value is the message.
 
         :return: a jumbotron object
         :raises NotValidTag: Raises exception if a valid tag is not used
@@ -273,6 +274,8 @@ class ReportWriter:
                     tag.pre(content)
                 else:
                     tag.p(content)
+                if 'badge' in kwargs:
+                    rng.HelperFunctions.create_badges(kwargs.get('badge'))
         return str(rng.HelperFunctions.convert_to_string(r))
 
     def report_image_carousel(self, *args, **kwargs):
@@ -407,6 +410,7 @@ class ReportWriter:
                     the color, and the second is the message
             * **reference** (*tuple*): Adds a small button which hrefs to a user supplied link.
                 Is a tuple. First value is color, second is link
+            * **badge** (*dict*): Adds badges. Key is the color, and value is the message.
 
         Example of how to get code from file:
             >>> with open('somefile.py', 'r') as f:
@@ -430,6 +434,8 @@ class ReportWriter:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
             with tag.div(_class="container", style="max-height: 70%; overflow: auto; margin-bottom: 20"):
                 tag.pre().add(tag.code(code))
+                if 'badge' in kwargs:
+                    rng.HelperFunctions.create_badges(kwargs.get('badge'))
         return str(c)
 
     def report_captions(self, content, **kwargs):
@@ -645,7 +651,6 @@ class Assets:
     Assets allows one to either download and map all dependent CSS and JS files, or
     use existing CSS and JS files
     """
-
     @staticmethod
     def local(rel_path):
         """

@@ -3,6 +3,7 @@ Helper module for reportng
 """
 import dominate.tags as tag
 from dominate.util import raw
+import logging
 
 
 class JSCSS:
@@ -202,7 +203,7 @@ class HelperFunctions:
     #: Valid options for colors/cards etc
     valid_tags = ['primary', 'secondary', 'success', 'danger',
                   'warning', 'info', 'light', 'dark', 'default',
-                  'red', 'green', 'blue', 'yellow']
+                  'red', 'green', 'blue', 'yellow', 'light']
 
     @staticmethod
     def color_to_tag(s):
@@ -217,6 +218,8 @@ class HelperFunctions:
             s = 'warning'
         elif s == 'blue':
             s = 'info'
+        elif s == 'light':
+            s = 'secondary'
         else:
             s = s
         return s
@@ -296,3 +299,19 @@ class HelperFunctions:
             return b
         else:
             raise NotValidTag('Use two values in the tuple')
+
+    @staticmethod
+    def create_badges(b):
+        """
+        Creates badges at the bottom of a section
+        """
+        total = ''
+        if not isinstance(b, dict):
+            raise NotValidTag('Use a dictionary to pass badge values')
+        for k, v in b.items():
+            if k not in HelperFunctions.valid_tags:
+                raise NotValidTag('Choose a valid tag color from\n%s' % ' '.join(HelperFunctions.valid_tags))
+            if len(v) > 14:
+                logging.warning('Do you really want a badge that long?')
+            total += str(tag.span(v, _class="badge badge-%s float-right" % HelperFunctions.color_to_tag(k)))
+        return total
