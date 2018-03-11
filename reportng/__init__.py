@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.48'
+__version__ = '0.49'
 
 
 class ReportWriter:
@@ -35,19 +35,18 @@ class ReportWriter:
         >>> r = reporng.ReportWriter('my report', 'securisec', code=True)
     """
 
-    def __init__(self, report_name, brand, **kwargs):
+    def __init__(self, report_name, brand, asciinema=False, pbar=True,
+                 search=True, code=False, theme_preview=False, **kwargs):
         """
         Assign theme and report name
 
         :param str brand: Name of the company/tester
         :param str report_name: Name of report. Default is Sample report
-        :param \**kwargs: See documentation for valid keys
-
-        Kwargs:
-            * **asciinema** (*bool*): Set to true to use asciinema's in report. Default is False
-            * **code** (*bool*): Set to True in order to use code highlighting
-            * **pbar** (*bool*): Set to True to enable the progress bar
-            * **search** (*bool*): Set to False to disable search and highlight
+        :param bool theme_preview: Set to True to see a theme preview dropdown
+        :param bool asciinema: Set to true to use asciinema's in report. Default is False
+        :param bool code: Set to True in order to use code highlighting
+        :param bool pbar: Set to True to enable the progress bar
+        :param bool search: Set to False to disable search and highlight
 
         Example:
             >>> import reportng
@@ -57,10 +56,11 @@ class ReportWriter:
         self.report_name = report_name
         self.brand = brand
         self.document = dominate.document(title=self.report_name)
-        self.asciinema = kwargs.get('asciinema')
-        self.code = kwargs.get('code')
-        self.pbar = kwargs.get('pbar')
-        self.search = kwargs.get('search')
+        self.asciinema = asciinema
+        self.code = code
+        self.pbar = pbar
+        self.search = search
+        self.theme_preview = theme_preview
 
     def report_header(self, theme='lux', highlight_color='#f1c40f', **kwargs):
         """
@@ -131,7 +131,8 @@ class ReportWriter:
                 bootswatch = "https://bootswatch.com/4/%s/bootstrap.min.css" % theme
             else:
                 bootswatch = rng.JSCSS.bootswatch
-            tag.link(rel="stylesheet", type="text/css", href=bootswatch)
+            tag.link(rel="stylesheet", type="text/css",
+                     href=bootswatch, id='bootswatch')
             tag.link(href=rng.JSCSS.font_awesome, rel="stylesheet")
 
             # constructing this way to avoid loading un needed js and css
@@ -175,7 +176,10 @@ class ReportWriter:
                 tag.a(self.brand, _class="navbar-brand", href="#")
                 # sets the report title on the navbar
                 tag.span(self.report_name, _class="navbar-text text-secondary")
-
+                # theme previewer
+                if self.theme_preview:
+                    tag.comment('Theme previewer')
+                    raw(rng.CustomHTML.themes_preview)
                 # Button for responsive navbar
                 with tag.button(_class="navbar-toggler",
                                 type="button", data_toggle="collapse", data_target="#navbarid",
@@ -210,10 +214,15 @@ class ReportWriter:
                                 """
                                 <button data-search="next" class="btn btn-sm btn-secondary">&darr;</button>
                                 <button data-search="prev" class="btn btn-sm btn-secondary">&uarr;</button>
-                                <button data-search="clear" class="btn btn-sm btn-secondary">✖</button>
                                 """
+                                # <button data-search="clear" class="btn btn-sm btn-secondary">✖</button>
                             )
-
+            if self.theme_preview:
+                # theme preview jquery
+                tag.comment('theme preview jquery')
+                tag.script(raw(
+                    rng.JSCustom.themes_preview
+                ))
         return str(report_head)
 
     def report_section(self, title, content, pre_tag=True, tag_color='default',
@@ -274,8 +283,8 @@ class ReportWriter:
                     tag.pre(content)
                 else:
                     tag.p(content)
-                if 'badge' in kwargs:
-                    rng.HelperFunctions.create_badges(kwargs.get('badge'))
+            if 'badge' in kwargs:
+                rng.HelperFunctions.create_badges(kwargs.get('badge'))
         return str(rng.HelperFunctions.convert_to_string(r))
 
     def report_image_carousel(self, *args, **kwargs):
@@ -471,7 +480,7 @@ class ReportWriter:
             * **title** (*str*): The title of the section
             * **section** (*bool*): Set to false to append table to previous section
             * **header_color** (*str*): Sets the color of the header. Defaults to dark
-            * **tindex** (*bool*): Sets the color of the header. Defaults to dark
+            * **tindex** (*bool*): Sets an index column
             * **alert** (*tuple*): Creats a dismissable alert box. Requires a tuple. First
                 value is color and second value is message.
 
@@ -514,8 +523,7 @@ class ReportWriter:
                 with tag.table(_class="table table-striped display nowrap table-hover", style="width: 90%") as tables:
                     # Make table header
                     if table_header:
-                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(
-                                tag.tr()):
+                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(tag.tr()):
                             if kwargs.get('tindex') == True:
                                 tag.th('Index')
                             for h in range(len(table_header)):

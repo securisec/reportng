@@ -9,7 +9,7 @@ print('download_assets')
 
 
 r = reportng.ReportWriter(report_name='somename', brand='somebrand',
-                          asciinema=True, code=True, pbar=True)
+                          asciinema=True, code=True, pbar=True, theme_preview=True)
 report = r.report_header(script='alert(123);')
 print('report_header')
 content = """

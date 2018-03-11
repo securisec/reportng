@@ -108,63 +108,130 @@ class JSCustom:
                 """
 
     markjs_script = """
-                    $(function () {
-                        var $input = $("input[type='search']"),
-                            $clearBtn = $("button[data-search='clear']"),
-                            $prevBtn = $("button[data-search='prev']"),
-                            $nextBtn = $("button[data-search='next']"),
-                            $content = $(".context"),
-                            $results,
-                            currentClass = "current",
-                            offsetTop = 150,
-                            currentIndex = 0;
-                        function jumpTo() {
-                            if ($results.length) {
-                                var position,
-                                    $current = $results.eq(currentIndex);
-                                $results.removeClass(currentClass);
-                                if ($current.length) {
-                                    $current.addClass(currentClass);
-                                    position = $current.offset().top - offsetTop;
-                                    window.scrollTo(0, position);
-                                }
+                $(function () {
+                    var $input = $("input[type='search']"),
+                        $clearBtn = $("button[data-search='clear']"),
+                        $prevBtn = $("button[data-search='prev']"),
+                        $nextBtn = $("button[data-search='next']"),
+                        $content = $(".context"),
+                        $results,
+                        currentClass = "current",
+                        offsetTop = 150,
+                        currentIndex = 0;
+                    function jumpTo() {
+                        if ($results.length) {
+                            var position,
+                                $current = $results.eq(currentIndex);
+                            $results.removeClass(currentClass);
+                            if ($current.length) {
+                                $current.addClass(currentClass);
+                                position = $current.offset().top - offsetTop;
+                                window.scrollTo(0, position);
                             }
                         }
-                        $input.on("input", function () {
-                            var searchVal = this.value;
-                            $content.unmark({
-                                done: function () {
-                                    $content.markRegExp(RegExp(searchVal), {
-                                        separateWordSearch: false,
-                                        done: function () {
-                                            $results = $content.find("mark");
-                                            currentIndex = 0;
-                                            var c = document.getElementById('searchcount');
-                                            c.innerHTML = $results.length;
-                                            jumpTo();
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                        $clearBtn.on("click", function () {
-                            $content.unmark();
-                            $input.val("").focus();
-                        });
-                        $nextBtn.add($prevBtn).on("click", function () {
-                            if ($results.length) {
-                                currentIndex += $(this).is($prevBtn) ? -1 : 1;
-                                if (currentIndex < 0) {
-                                    currentIndex = $results.length - 1;
-                                }
-                                if (currentIndex > $results.length - 1) {
-                                    currentIndex = 0;
-                                }
-                                jumpTo();
+                    }
+                    $input.on("input", function () {
+                        var searchVal = this.value;
+                        $content.unmark({
+                            done: function () {
+                                $content.markRegExp(RegExp(searchVal), {
+                                    separateWordSearch: false,
+                                    done: function () {
+                                        $results = $content.find("mark");
+                                        currentIndex = 0;
+                                        var c = document.getElementById('searchcount');
+                                        c.innerHTML = $results.length;
+                                        jumpTo();
+                                    }
+                                });
                             }
                         });
                     });
+                    $nextBtn.add($prevBtn).on("click", function () {
+                        if ($results.length) {
+                            currentIndex += $(this).is($prevBtn) ? -1 : 1;
+                            if (currentIndex < 0) {
+                                currentIndex = $results.length - 1;
+                            }
+                            if (currentIndex > $results.length - 1) {
+                                currentIndex = 0;
+                            }
+                            jumpTo();
+                        }
+                    });
+                });
                     """
+
+    themes_preview = """
+            $('.ddtheme').click(function(e){
+            themes = {
+                'Cerulean' : 'https://bootswatch.com/4/cerulean/bootstrap.min.css',
+                'Cosmo' : 'https://bootswatch.com/4/cosmo/bootstrap.min.css',
+                'Cyborg' : 'https://bootswatch.com/4/cyborg/bootstrap.min.css',
+                'Darkly' : 'https://bootswatch.com/4/darkly/bootstrap.min.css',
+                'Flatly' : 'https://bootswatch.com/4/flatly/bootstrap.min.css',
+                'Journal' : 'https://bootswatch.com/4/journal/bootstrap.min.css',
+                'Litera' : 'https://bootswatch.com/4/litera/bootstrap.min.css',
+                'Lumen' : 'https://bootswatch.com/4/lumen/bootstrap.min.css',
+                'Lux' : 'https://bootswatch.com/4/lux/bootstrap.min.css',
+                'Materia' : 'https://bootswatch.com/4/materia/bootstrap.min.css',
+                'Minty' : 'https://bootswatch.com/4/minty/bootstrap.min.css',
+                'Pulse' : 'https://bootswatch.com/4/pulse/bootstrap.min.css',
+                'Sandstone' : 'https://bootswatch.com/4/sandstone/bootstrap.min.css',
+                'Simplex' : 'https://bootswatch.com/4/simplex/bootstrap.min.css',
+                'Sketchy' : 'https://bootswatch.com/4/sketchy/bootstrap.min.css',
+                'Slate' : 'https://bootswatch.com/4/slate/bootstrap.min.css',
+                'Solar' : 'https://bootswatch.com/4/solar/bootstrap.min.css',
+                'Spacelab' : 'https://bootswatch.com/4/spacelab/bootstrap.min.css',
+                'Superhero' : 'https://bootswatch.com/4/superhero/bootstrap.min.css',
+                'United' : 'https://bootswatch.com/4/united/bootstrap.min.css',
+                'Yeti' : 'https://bootswatch.com/4/yeti/bootstrap.min.css',
+        }
+        var choice = $('#dropdownId');
+        console.log(choice)
+        choice.text(this.innerHTML);
+        if (choice[0].innerHTML in themes){
+            $('#bootswatch').attr('href', themes[choice[0].innerHTML])
+        }
+        
+    });
+                """
+
+
+class CustomHTML:
+    """
+    Some custom HTML to help with element creation
+    """
+    themes_preview = """
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Themes</a>
+            <div class="dropdown-menu" aria-labelledby="dropdownId">
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Cerulean</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Cosmo</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Cyborg</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Darkly</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Flatly</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Journal</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Litera</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Lumen</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Lux</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Materia</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Minty</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Pulse</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Sandstone</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Simplex</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Sketchy</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Slate</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Solar</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Spacelab</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Superhero</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">United</a>
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Yeti</a>
+            </div>
+        </li>
+    </ul>
+    """
 
 
 class NotValidTag(Exception):
@@ -310,8 +377,10 @@ class HelperFunctions:
             raise NotValidTag('Use a dictionary to pass badge values')
         for k, v in b.items():
             if k not in HelperFunctions.valid_tags:
-                raise NotValidTag('Choose a valid tag color from\n%s' % ' '.join(HelperFunctions.valid_tags))
+                raise NotValidTag('Choose a valid tag color from\n%s' %
+                                  ' '.join(HelperFunctions.valid_tags))
             if len(v) > 14:
                 logging.warning('Do you really want a badge that long?')
-            total += str(tag.span(v, _class="badge badge-%s float-right" % HelperFunctions.color_to_tag(k)))
+            total += str(tag.span(v, _class="badge badge-%s float-right" %
+                                            HelperFunctions.color_to_tag(k)))
         return total
