@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.49'
+__version__ = '0.50'
 
 
 class ReportWriter:
@@ -69,10 +69,8 @@ class ReportWriter:
 
         :param str theme: Name of any bootswatch theme. Default is lux
         :param str highlight_color: any rgb color. default is #f1c40f
+        :param str script: Kwarg Pass additional JS/jquery to add to header
         :return: The head tag for the report.
-
-        Kwargs:
-            * **script** (*str*): Pass additional JS/jquery to add to header
 
         Example showing how to change the default theme:
             >>> r = report.report_header(theme='flatly')
@@ -227,26 +225,20 @@ class ReportWriter:
 
     def report_section(self, title, content, pre_tag=True, tag_color='default',
                        title_color=True, overflow=rng.CSSControl.css_overflow,
-                       **kwargs):
+                       text_color='primary', **kwargs):
         """
         This form the main body of the report
 
         :param str title: The h1/header title of the section
-        :param bool pre_tag: Default is True and treats content as monospaced.
-            Set to False to use p tag
+        :param bool pre_tag: Default is True and treats content as monospaced. Set to False to use p tag
         :param str content: The content for this section
         :param str tag_color: The severity color of the section.
-        :param str overflow: Allows to control the style of the div container.
-            Defaults to scroll on overflow. Set to empty string to have all content show
-        :param bool title_color: Controls if the header background or text is colored.
-            Default is True and lets background color.
-
-        Kwargs:
-            * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
-                the color, and the second is the message
-            * **reference** (*tuple*): Adds a small button which hrefs to a user supplied link.
-                Is a tuple. First value is color, second is link
-            * **badge** (*dict*): Adds badges. Key is the color, and value is the message.
+        :param str text_color: Controls the color of the text. Use red, blue, green, yellow etc
+        :param str overflow: Allows to control the style of the div container. Defaults to scroll on overflow. Set to empty string to have all content show
+        :param bool title_color: Controls if the header background or text is colored. Default is True and lets background color.
+        :param tuple alert: Kwarg Create a dismissable alert box. First value of tuple is the color, and the second is the message
+        :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
+        :param dict badge: Kwarg Adds badges. Key is the color, and value is the message.
 
         :return: a jumbotron object
         :raises NotValidTag: Raises exception if a valid tag is not used
@@ -280,9 +272,11 @@ class ReportWriter:
             # creates a reference button with link
             with tag.div(_class="container", style=overflow):
                 if pre_tag:
-                    tag.pre(content)
+                    tag.pre(content, _class="text-%s" %
+                                            rng.HelperFunctions.color_to_tag(text_color))
                 else:
-                    tag.p(content)
+                    tag.p(content, _class="text-%s" %
+                                          rng.HelperFunctions.color_to_tag(text_color))
             if 'badge' in kwargs:
                 rng.HelperFunctions.create_badges(kwargs.get('badge'))
         return str(rng.HelperFunctions.convert_to_string(r))
@@ -353,15 +347,10 @@ class ReportWriter:
         Section creates a jumbotron to house an asciinema
 
         :param str asciinema_link: Link to asciinema. Could be http/s or local files
-        :param str title: Set the title of the asciinema. If set, it will create its own section.
-            If not, it will append to previous section
+        :param str title: Set the title of the asciinema. If set, it will create its own section. If not, it will append to previous section
+        :param tuple alert: Kwarg Create a dismissable alert box. First value of tuple is the color, and the second is the message
+        :param bool section: Kwarg Set to True to append the cards section to the preceding section. Default is false
         :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
-
-        Kwargs:
-            * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
-                    the color, and the second is the message
-            * **section** (*bool*) - Set to True to append the cards section to the preceding
-                section. Default is false
 
         Example:
             >>> r += report.report_asciinema('https://asciinema.org/a/XvEb7StzQ3C1BAAlvn9CDvqLR', title='asciinema')
@@ -409,17 +398,12 @@ class ReportWriter:
 
         :param str title: Title of the code section.
         :param str code: Code. Use pre and code tags so multiline code is fine
+        :param bool section: Kwarg Set to True to append the cards section to the preceding section. Default is false
+        :param tuple alert: Kwarg Create a dismissable alert box. First value of tuple is the color, and the second is the message
+        :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
+        :param dict badge: Kwarg Adds badges. Key is the color, and value is the message.
         :return: a string code section
         :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
-
-        Kwargs:
-            * **section** (*bool*) - Set to True to append the cards section to the preceding
-                 section. Default is false
-            * **alert** (*tuple*): Create a dismissable alert box. First value of tuple is
-                    the color, and the second is the message
-            * **reference** (*tuple*): Adds a small button which hrefs to a user supplied link.
-                Is a tuple. First value is color, second is link
-            * **badge** (*dict*): Adds badges. Key is the color, and value is the message.
 
         Example of how to get code from file:
             >>> with open('somefile.py', 'r') as f:
@@ -447,11 +431,12 @@ class ReportWriter:
                     rng.HelperFunctions.create_badges(kwargs.get('badge'))
         return str(c)
 
-    def report_captions(self, content, **kwargs):
+    def report_captions(self, content, text_color='primary', **kwargs):
         """
         Simple method to added some center aligned text.
 
         :param str content: content to add
+        :param str text_color: Controls the color of the text. Example, red, blue, yellow, green
 
         Example:
             >>> r += report_captions('This is my caption')
@@ -461,7 +446,8 @@ class ReportWriter:
         else:
             style = "margin-top:-30;"
         with tag.div(_class="container text-center", style=style) as s:
-            tag.p(content)
+            tag.p(content, _class="text-%s" %
+                                  rng.HelperFunctions.color_to_tag(text_color))
         return str(rng.HelperFunctions.convert_to_string(s))
 
     def report_table(self, *args, **kwargs):
@@ -470,19 +456,18 @@ class ReportWriter:
 
         :param tuple \*args: Rows of data as tuples. Ex ('data1', 'data2', ...)
         :param str \**kwargs: Kwargs to control title, header, etc.
+        :param tuple header: Kwarg The header for the table. Accepts a tuple
+        :param str title: Kwarg The title of the section
+        :param bool section: Kwarg Set to false to append table to previous section
+        :param str header_color: Kwarg Sets the color of the header. Defaults to dark
+        :param bool tindex: Kwarg Sets an index column
+        :param tuple alert: Kwarg Creats a dismissable alert box. Requires a tuple. First value is color and second value is message.
+
         :return: A table object
+
         :raises TypeError: Raises exception if not a tuple or all lenghts are not the same
         :raises NotValidTag: If not a valid bootstrap color
         :raises TableError: When there are issues creating a table
-
-        Kwargs:
-            * **header** (*tuple*): The header for the table. Accepts a tuple
-            * **title** (*str*): The title of the section
-            * **section** (*bool*): Set to false to append table to previous section
-            * **header_color** (*str*): Sets the color of the header. Defaults to dark
-            * **tindex** (*bool*): Sets an index column
-            * **alert** (*tuple*): Creats a dismissable alert box. Requires a tuple. First
-                value is color and second value is message.
 
         Example showing how to change the default theme:
             >>> r = report.report_table(('data1', 'demo1'), ('data2', 'demo2'),
@@ -548,16 +533,12 @@ class ReportWriter:
             tuple is used to color the card, second value is the header for the
             card and the third is passed to a p tag for content
         * tuple values : Are in order fo ('color', 'title', 'content')
-        :param \**kwargs: See valid keys in documentation
+        :param bool section: Kwarg Set to True to append the cards section to the preceding section. Default is false
+        :param str title: Kwarg Sets an optional title for cards
+        :param bool border_only: Kwarg Changes the look of the cards
+        :param tuple alert: Kwarg Creates a dismissable alert box. Requires a tuple. First value is color and second value is message.
         :raises TypeError: Raises TypeError if args is not a tuple
         :raises TooManyValues: Raises exception when the number of values in tuple is not 3
-
-        Kwargs:
-            * **section** (*bool*) - Set to True to append the cards section to the preceding section. Default is false
-            * **title** (*str*) - Sets an optional title for cards
-            * **border_only** (*bool*) - Changes the look of the cards
-            * **alert** (*tuple*) - Creates a dismissable alert box. Requires a tuple. First
-                value is color and second value is message.
 
         Example:
             >>> r += report_cards(('primary', 'header1', 'some text'),
@@ -605,13 +586,10 @@ class ReportWriter:
         Returns the footer object. Supports social media
 
         :param str message: A message in the footer
-        :param \**kwargs: Supported paramters are email, linkedin, github and twitter
-
-        Kwargs:
-            * **twitter** (*str*) - Twitter link
-            * **github** (*str*) - Github link
-            * **linkedin** (*str*) - LinkedIn link
-            * **email** (*str*) - email address
+        :param str twitter: Kwarg Twitter link
+        :param str github: Kwarg Github link
+        :param str linkedin: Kwarg LinkedIn link
+        :param str email: Kwarg email address
 
         Example with some social media:
             >>> r += report_footer(message='securisec', twitter='https://twitter.com/securisec')

@@ -287,6 +287,8 @@ class HelperFunctions:
             s = 'info'
         elif s == 'light':
             s = 'secondary'
+        elif s == 'primary':
+            s = 'primary'
         else:
             s = s
         return s

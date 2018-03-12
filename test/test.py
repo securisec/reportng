@@ -25,7 +25,7 @@ report += r.report_section(title='title', content=content, pre_tag=True,
                            overflow='', badge={'red': 'red badge'}, reference=('green', 'https://google.com'))
 print('report_section1')
 report += r.report_section(title='title', content=content, pre_tag=True,
-                           tag_color='danger', title_color=False, overflow='')
+                           tag_color='danger', title_color=False, overflow='', text_color='red')
 print('report_section2')
 report += r.report_image_carousel('a', 'b', a='a', b='b')
 print('report_image')
