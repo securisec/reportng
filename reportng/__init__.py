@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.50'
+__version__ = '0.51'
 
 
 class ReportWriter:
@@ -239,6 +239,7 @@ class ReportWriter:
         :param tuple alert: Kwarg Create a dismissable alert box. First value of tuple is the color, and the second is the message
         :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
         :param dict badge: Kwarg Adds badges. Key is the color, and value is the message.
+        :param str custom_html: Insert raw html to be added to the end of the section
 
         :return: a jumbotron object
         :raises NotValidTag: Raises exception if a valid tag is not used
@@ -279,6 +280,8 @@ class ReportWriter:
                                           rng.HelperFunctions.color_to_tag(text_color))
             if 'badge' in kwargs:
                 rng.HelperFunctions.create_badges(kwargs.get('badge'))
+            if 'custom_html' in kwargs:
+                raw(kwargs.get('custom_html'))
         return str(rng.HelperFunctions.convert_to_string(r))
 
     def report_image_carousel(self, *args, **kwargs):
@@ -408,7 +411,7 @@ class ReportWriter:
         Example of how to get code from file:
             >>> with open('somefile.py', 'r') as f:
             >>>     data = f.read()
-            >>> r += report_code_section('my py code', data)
+            >>> r += report.report_code_section('my py code', data)
         """
         if not self.code:
             raise rng.ObjectNotInitiated(
@@ -437,9 +440,10 @@ class ReportWriter:
 
         :param str content: content to add
         :param str text_color: Controls the color of the text. Example, red, blue, yellow, green
+        :param str custom_html: Insert raw html to be added to the end of the section
 
         Example:
-            >>> r += report_captions('This is my caption')
+            >>> r += report.report_captions('This is my caption')
         """
         if 'section' in kwargs:
             style = rng.CSSControl.sticky_section_css
@@ -448,6 +452,8 @@ class ReportWriter:
         with tag.div(_class="container text-center", style=style) as s:
             tag.p(content, _class="text-%s" %
                                   rng.HelperFunctions.color_to_tag(text_color))
+            if 'custom_html' in kwargs:
+                raw(kwargs.get('custom_html'))
         return str(rng.HelperFunctions.convert_to_string(s))
 
     def report_table(self, *args, **kwargs):
@@ -508,7 +514,8 @@ class ReportWriter:
                 with tag.table(_class="table table-striped display nowrap table-hover", style="width: 90%") as tables:
                     # Make table header
                     if table_header:
-                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(tag.tr()):
+                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(
+                                tag.tr()):
                             if kwargs.get('tindex') == True:
                                 tag.th('Index')
                             for h in range(len(table_header)):
@@ -541,9 +548,9 @@ class ReportWriter:
         :raises TooManyValues: Raises exception when the number of values in tuple is not 3
 
         Example:
-            >>> r += report_cards(('primary', 'header1', 'some text'),
-            >>>                   ('success', 'header2', 'some other text'),
-            >>>                    title='My cards')
+            >>> r += report.report_cards(('primary', 'header1', 'some text'),
+            >>>                       ('success', 'header2', 'some other text'),
+            >>>                        title='My cards')
         """
 
         # Check to see if args is a tuple
@@ -590,9 +597,10 @@ class ReportWriter:
         :param str github: Kwarg Github link
         :param str linkedin: Kwarg LinkedIn link
         :param str email: Kwarg email address
+        :param str custom_html: Insert raw html to be added to the end of the section
 
         Example with some social media:
-            >>> r += report_footer(message='securisec', twitter='https://twitter.com/securisec')
+            >>> r += report.report_footer(message='securisec', twitter='https://twitter.com/securisec')
         """
         # creates the footer
         with tag.footer(_class="page-footer") as footer:
@@ -615,8 +623,56 @@ class ReportWriter:
                                     tag.i(_class="fas fa-at fa-2x white-text mr-md-4"))
                         # i tag for user message
                         tag.span(message, style="font-size: 125%;")
+                if 'custom_html' in kwargs:
+                    raw(kwargs.get('custom_html'))
 
         return str(footer)
+
+    def report_list_group(self, items, **kwargs):
+        """
+        Creates a list group. Each arg is a line
+
+        :param str title: Title of the section
+        :param list items: Each arg passed will be treated as a new list item
+        :param bool section: Kwarg Set to True to append the cards section to the preceding section. Default is false
+        :param tuple alert: Kwarg Create a dismissable alert box. First value of tuple is the color, and the second is the message
+        :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
+        :param dict badge: Kwarg Adds badges. Key is the color, and value is the message.
+        :param str custom_html: Insert raw html to be added to the end of the section
+        :raises NoValidTag: Raises not valid tag
+
+        Example:
+            >>> r += report.report_list_group('First entry', 'Second entry', ...)
+        """
+        if not kwargs.get('title'):
+            raise rng.NotValidTag('Need a title')
+        title = kwargs.get('title')
+        if not isinstance(items, list):
+            raise rng.NotValidTag('Items have to be in the form of a list')
+
+        if 'section' in kwargs:
+            style = rng.CSSControl.sticky_section_css
+        else:
+            style = rng.CSSControl.css_overflow
+        with tag.div(_class="jumbotron container context", style=style) as r:
+            t = tag.h1(title, id="%s" % title.replace(' ', ''))
+            # creates a reference button with link
+            if 'reference' in kwargs:
+                t.add(rng.HelperFunctions.ref_button(kwargs.get('reference')))
+            # creates dismissable alert box
+            if 'alert' in kwargs:
+                rng.HelperFunctions.make_alert(kwargs.get('alert'))
+
+            with tag.ul(_class="list-group"):
+                for i in range(len(items)):
+                    tag.li(items[i],
+                           _class="list-group-item d-flex justify-content-between align-items-center text-primary")
+
+            if 'badge' in kwargs:
+                rng.HelperFunctions.create_badges(kwargs.get('badge'))
+            if 'custom_html' in kwargs:
+                raw(kwargs.get('custom_html'))
+        return rng.HelperFunctions.convert_to_string(r)
 
     def report_save(self, path, all_objects):
         """
@@ -637,6 +693,7 @@ class Assets:
     Assets allows one to either download and map all dependent CSS and JS files, or
     use existing CSS and JS files
     """
+
     @staticmethod
     def local(rel_path):
         """
@@ -692,7 +749,6 @@ class Assets:
                     f.write(get(v, headers=headers).text)
                     logging.info('Downloaded %s to %s' % (v, download_path))
                     setattr(rng.JSCSS, k, rel_path + local_file)
-
 
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture

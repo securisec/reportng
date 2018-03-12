@@ -23,6 +23,9 @@ content = """
 report += r.report_section(title='title', content=content, pre_tag=True,
                            tag_color='red', title_color=False, alert=('green', 'some message here'),
                            overflow='', badge={'red': 'red badge'}, reference=('green', 'https://google.com'))
+report += r.report_list_group(['some nonsense', 'some other nonense', 'hello world'],
+                              title='Some list group')
+print('report_list_group')
 print('report_section1')
 report += r.report_section(title='title', content=content, pre_tag=True,
                            tag_color='danger', title_color=False, overflow='', text_color='red')
