@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.51'
+__version__ = '0.52'
 
 
 class ReportWriter:
@@ -240,6 +240,7 @@ class ReportWriter:
         :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
         :param dict badge: Kwarg Adds badges. Key is the color, and value is the message.
         :param str custom_html: Insert raw html to be added to the end of the section
+        :param dict modal: Create a modal. Is a dictionary. Valid keys are button, title and content
 
         :return: a jumbotron object
         :raises NotValidTag: Raises exception if a valid tag is not used
@@ -282,6 +283,10 @@ class ReportWriter:
                 rng.HelperFunctions.create_badges(kwargs.get('badge'))
             if 'custom_html' in kwargs:
                 raw(kwargs.get('custom_html'))
+            if 'modal' in kwargs:
+                if isinstance(kwargs.get('modal'), dict):
+                    rng.HelperFunctions.make_modals(
+                        title.replace(' ', ''), kwargs.get('modal'))
         return str(rng.HelperFunctions.convert_to_string(r))
 
     def report_image_carousel(self, *args, **kwargs):
@@ -405,6 +410,7 @@ class ReportWriter:
         :param tuple alert: Kwarg Create a dismissable alert box. First value of tuple is the color, and the second is the message
         :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
         :param dict badge: Kwarg Adds badges. Key is the color, and value is the message.
+        :param dict modal: Create a modal. Is a dictionary. Valid keys are button, title and content
         :return: a string code section
         :raises ObjectNotInitiated: Raises exception when the correct flags are not set in ReportWriter
 
@@ -432,6 +438,10 @@ class ReportWriter:
                 tag.pre().add(tag.code(code))
                 if 'badge' in kwargs:
                     rng.HelperFunctions.create_badges(kwargs.get('badge'))
+            if 'modal' in kwargs:
+                if isinstance(kwargs.get('modal'), dict):
+                    rng.HelperFunctions.make_modals(
+                        title.replace(' ', ''), kwargs.get('modal'))
         return str(c)
 
     def report_captions(self, content, text_color='primary', **kwargs):
@@ -468,6 +478,7 @@ class ReportWriter:
         :param str header_color: Kwarg Sets the color of the header. Defaults to dark
         :param bool tindex: Kwarg Sets an index column
         :param tuple alert: Kwarg Creats a dismissable alert box. Requires a tuple. First value is color and second value is message.
+        :param dict modal: Create a modal. Is a dictionary. Valid keys are button, title and content
 
         :return: A table object
 
@@ -514,8 +525,7 @@ class ReportWriter:
                 with tag.table(_class="table table-striped display nowrap table-hover", style="width: 90%") as tables:
                     # Make table header
                     if table_header:
-                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(
-                                tag.tr()):
+                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(tag.tr()):
                             if kwargs.get('tindex') == True:
                                 tag.th('Index')
                             for h in range(len(table_header)):
@@ -530,6 +540,10 @@ class ReportWriter:
                                     'Length of all tuples has to be the same')
                             for t in range(len(args[r])):
                                 tag.td(args[r][t])
+                if 'modal' in kwargs:
+                    if isinstance(kwargs.get('modal'), dict):
+                        rng.HelperFunctions.make_modals(
+                            title.replace(' ', ''), kwargs.get('modal'))
         return rng.HelperFunctions.convert_to_string(c)
 
     def report_cards(self, *args, **kwargs):
@@ -639,6 +653,7 @@ class ReportWriter:
         :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
         :param dict badge: Kwarg Adds badges. Key is the color, and value is the message.
         :param str custom_html: Insert raw html to be added to the end of the section
+        :param dict modal: Create a modal. Is a dictionary. Valid keys are button, title and content
         :raises NoValidTag: Raises not valid tag
 
         Example:
@@ -672,6 +687,10 @@ class ReportWriter:
                 rng.HelperFunctions.create_badges(kwargs.get('badge'))
             if 'custom_html' in kwargs:
                 raw(kwargs.get('custom_html'))
+            if 'modal' in kwargs:
+                if isinstance(kwargs.get('modal'), dict):
+                    rng.HelperFunctions.make_modals(
+                        title.replace(' ', ''), kwargs.get('modal'))
         return rng.HelperFunctions.convert_to_string(r)
 
     def report_save(self, path, all_objects):
@@ -693,7 +712,6 @@ class Assets:
     Assets allows one to either download and map all dependent CSS and JS files, or
     use existing CSS and JS files
     """
-
     @staticmethod
     def local(rel_path):
         """

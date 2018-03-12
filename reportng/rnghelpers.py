@@ -386,3 +386,29 @@ class HelperFunctions:
             total += str(tag.span(v, _class="badge badge-%s float-right" %
                                             HelperFunctions.color_to_tag(k)))
         return total
+
+    @staticmethod
+    def make_modals(section, info):
+        if not 'button' in info:
+            button = 'Info'
+        else:
+            button = info['button']
+        for k in ['title', 'content']:
+            if not k in info:
+                raise NotValidTag('Make sure to use both title and content keys')
+        modal_title = info['title'].replace(' ', '')
+        modal_content = info['content']
+        tag.button(button, type="button", _class="btn btn-primary btn-md",
+                   data_toggle="modal", data_target="#%s" % modal_title)
+        with tag.div(_class="modal fade", id="%s" % modal_title, tabindex="-1",
+                     role="dialog", aria_labelledby="model%s" % modal_title, aria_hidden="true"):
+            with tag.div(_class="modal-dialog", role="document"):
+                with tag.div(_class="modal-content"):
+                    with tag.div(_class="modal-header"):
+                        tag.h4(modal_title, _class="modal-title",
+                               id="model%s" % modal_title)
+                    with tag.div(_class="modal-body"):
+                        tag.div(modal_content, _class="container-fluid")
+                    with tag.div(_class="modal-footer"):
+                        tag.button(
+                            'Close', type="button", _class="btn btn-sm btn-secondary", data_dismiss="modal")
