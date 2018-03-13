@@ -23,6 +23,12 @@ Currently, `reportng` supports the following:
 - Social integrated footers
 - Progress bar
 - Tables
+- List groups
+
+The following decorators can also be added:
+- modals
+- reference buttons
+- badges
 
 ## Installation
 > `pip install -U reportng`

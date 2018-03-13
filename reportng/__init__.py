@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.52'
+__version__ = '0.53'
 
 
 class ReportWriter:
@@ -62,7 +62,7 @@ class ReportWriter:
         self.search = search
         self.theme_preview = theme_preview
 
-    def report_header(self, theme='lux', highlight_color='#f1c40f', **kwargs):
+    def report_header(self, theme='lux', highlight_color='#f1c40f', navbar_bg='primary', **kwargs):
         """
         Controls the link and script tags in the head. This method should always be called
         at the top
@@ -70,6 +70,7 @@ class ReportWriter:
         :param str theme: Name of any bootswatch theme. Default is lux
         :param str highlight_color: any rgb color. default is #f1c40f
         :param str script: Kwarg Pass additional JS/jquery to add to header
+        :param str navbar_bg: Controls the color of the navbar.
         :return: The head tag for the report.
 
         Example showing how to change the default theme:
@@ -170,7 +171,9 @@ class ReportWriter:
             ))
 
             # Navbar on top with 2 margin to seperate from first jumbotron. add class mb-2
-            with tag.nav(_class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top"):
+            with tag.nav(
+                    _class="navbar navbar-expand-lg navbar-dark bg-%s sticky-top" % rng.HelperFunctions.color_to_tag(
+                            navbar_bg)):
                 tag.a(self.brand, _class="navbar-brand", href="#")
                 # sets the report title on the navbar
                 tag.span(self.report_name, _class="navbar-text text-secondary")
@@ -543,7 +546,7 @@ class ReportWriter:
                 if 'modal' in kwargs:
                     if isinstance(kwargs.get('modal'), dict):
                         rng.HelperFunctions.make_modals(
-                            title.replace(' ', ''), kwargs.get('modal'))
+                            kwargs.get('title').replace(' ', ''), kwargs.get('modal'))
         return rng.HelperFunctions.convert_to_string(c)
 
     def report_cards(self, *args, **kwargs):
