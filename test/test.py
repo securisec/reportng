@@ -58,6 +58,8 @@ report += r.report_cards(
     ('primary', 'a', 'a'), ('danger', 'a', 'a'),
     section=True, title='title', border_only=True
 )
+print('Custom html')
+report += r.report_custom_html('<p>some text</p>')
 print('report_cards')
 report += r.report_footer(message='message', github='a',
                           linkedin='a', email='a', twitter='a', alert=('green', 'some message here'))

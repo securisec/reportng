@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.53'
+__version__ = '0.54'
 
 
 class ReportWriter:
@@ -695,6 +695,16 @@ class ReportWriter:
                     rng.HelperFunctions.make_modals(
                         title.replace(' ', ''), kwargs.get('modal'))
         return rng.HelperFunctions.convert_to_string(r)
+
+    def report_custom_html(self, html):
+        """
+        Add any custom html inside a jumbotron.
+
+        :param str html: Any custom html
+        """
+        with tag.div(_class="jumbotron container context", style='padding:0') as c:
+            raw(html)
+        return rng.HelperFunctions.convert_to_string(c)
 
     def report_save(self, path, all_objects):
         """
