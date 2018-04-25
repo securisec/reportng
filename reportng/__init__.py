@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.55'
+__version__ = '0.56'
 
 
 class ReportWriter:
@@ -241,6 +241,7 @@ class ReportWriter:
         :param bool h2_title: Set to True if the title should be converted to a h2 tag. Will not apprear in section and cannot modify colors
         :param bool title_color: Controls if the header background or text is colored. Default is True and lets background color.
         :param tuple alert: Kwarg Create a dismissable alert box. First value of tuple is the color, and the second is the message
+        :param bool section: Kwarg Set to True to append the section to the preceding section. Default is false
         :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
         :param dict badge: Kwarg Adds badges. Key is the color, and value is the message.
         :param str custom_html: Insert raw html to be added to the end of the section
@@ -263,9 +264,13 @@ class ReportWriter:
 
         # create a space between body jumbotrons
         tag.br()
+        if 'section' in kwargs:
+            style = rng.CSSControl.sticky_section_css
+        else:
+            style = rng.CSSControl.not_sticky_section
         # creates the jumbotron. User dictates if it is pre or p tag
         with tag.div(_class="jumbotron container context",
-                     style=rng.CSSControl.jumbotron_style) as r:  # padding mods
+                     style=style) as r:  # padding mods
             # can change the text color, or the background color
             if h2_title:
                 tag.h2(title)
