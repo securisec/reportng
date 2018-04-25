@@ -4,6 +4,7 @@ Helper module for reportng
 import dominate.tags as tag
 from dominate.util import raw
 import logging
+from random import choice
 
 
 class JSCSS:
@@ -273,6 +274,12 @@ class HelperFunctions:
                   'red', 'green', 'blue', 'yellow', 'light']
 
     @staticmethod
+    def id_with_random(title):
+        random_string = ''.join(
+            [choice('abcdefghijklmnopqrstuvwxyz') for n in range(10)])
+        return ''.join(e for e in title if e.isalnum()) + random_string
+
+    @staticmethod
     def color_to_tag(s):
         """
         Maps colors to their appropriate tags
@@ -408,7 +415,7 @@ class HelperFunctions:
                         tag.h4(modal_title, _class="modal-title",
                                id="model%s" % modal_title)
                     with tag.div(_class="modal-body"):
-                        tag.div(modal_content, _class="container-fluid")
+                        tag.div(modal_content, _class="container-fluid", style="word-wrap: break-word;")
                     with tag.div(_class="modal-footer"):
                         tag.button(
                             'Close', type="button", _class="btn btn-sm btn-secondary", data_dismiss="modal")

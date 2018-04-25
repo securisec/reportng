@@ -28,7 +28,8 @@ report += r.report_list_group(['some nonsense', 'some other nonense', 'hello wor
 print('report_list_group')
 print('report_section1')
 report += r.report_section(title='title', content=content, pre_tag=True,
-                           tag_color='danger', title_color=False, overflow='', text_color='red')
+                           tag_color='danger', title_color=False, overflow='', text_color='red',
+                           h2_title=True)
 print('report_section2')
 report += r.report_image_carousel('a', 'b', a='a', b='b')
 print('report_image')

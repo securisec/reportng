@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.54'
+__version__ = '0.55'
 
 
 class ReportWriter:
@@ -228,7 +228,7 @@ class ReportWriter:
 
     def report_section(self, title, content, pre_tag=True, tag_color='default',
                        title_color=True, overflow=rng.CSSControl.css_overflow,
-                       text_color='primary', **kwargs):
+                       text_color='primary', h2_title=False, **kwargs):
         """
         This form the main body of the report
 
@@ -238,6 +238,7 @@ class ReportWriter:
         :param str tag_color: The severity color of the section.
         :param str text_color: Controls the color of the text. Use red, blue, green, yellow etc
         :param str overflow: Allows to control the style of the div container. Defaults to scroll on overflow. Set to empty string to have all content show
+        :param bool h2_title: Set to True if the title should be converted to a h2 tag. Will not apprear in section and cannot modify colors
         :param bool title_color: Controls if the header background or text is colored. Default is True and lets background color.
         :param tuple alert: Kwarg Create a dismissable alert box. First value of tuple is the color, and the second is the message
         :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
@@ -266,9 +267,12 @@ class ReportWriter:
         with tag.div(_class="jumbotron container context",
                      style=rng.CSSControl.jumbotron_style) as r:  # padding mods
             # can change the text color, or the background color
-            t = tag.h1(title, _class="%s-%s" %
-                                     (color, rng.HelperFunctions.color_to_tag(tag_color)),
-                       id="%s" % title.replace(' ', ''))
+            if h2_title:
+                tag.h2(title)
+            else:
+                t = tag.h1(title, _class="%s-%s" %
+                                         (color, rng.HelperFunctions.color_to_tag(tag_color)),
+                           id="%s" % rng.HelperFunctions.id_with_random(title))
             if 'reference' in kwargs:
                 t.add(rng.HelperFunctions.ref_button(kwargs.get('reference')))
             # creates dismissable alert box
@@ -391,7 +395,7 @@ class ReportWriter:
         with tag.div(_class="jumbotron jumbomargin container",
                      style=style) as a:
             if title != '':
-                tag.h1(title, id="%s" % title.replace(' ', ''))
+                tag.h1(title, id="%s" % rng.HelperFunctions.id_with_random(title))
             # create dismissable alert box
             if 'alert' in kwargs:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
@@ -431,7 +435,7 @@ class ReportWriter:
             style = rng.CSSControl.not_sticky_section
         with tag.div(_class="jumbotron container context",
                      style=style) as c:  # padding mods
-            t = tag.h1(title, id="%s" % title.replace(' ', ''))
+            t = tag.h1(title, id="%s" % rng.HelperFunctions.id_with_random(title))
             if 'reference' in kwargs:
                 t.add(rng.HelperFunctions.ref_button(kwargs.get('reference')))
             # create dismissable alert box
@@ -520,7 +524,7 @@ class ReportWriter:
         with tag.div(_class="jumbotron container context", style=style) as c:  # padding mods
             if 'title' in kwargs:
                 tag.h1(kwargs.get('title'), id="%s" %
-                                               kwargs.get('title').replace(' ', ''))
+                                               rng.HelperFunctions.id_with_random(kwargs.get('title')))
             # create dismissable alert box
             if 'alert' in kwargs:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
@@ -528,7 +532,8 @@ class ReportWriter:
                 with tag.table(_class="table table-striped display nowrap table-hover", style="width: 90%") as tables:
                     # Make table header
                     if table_header:
-                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(tag.tr()):
+                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(
+                                tag.tr()):
                             if kwargs.get('tindex') == True:
                                 tag.th('Index')
                             for h in range(len(table_header)):
@@ -673,7 +678,8 @@ class ReportWriter:
         else:
             style = rng.CSSControl.css_overflow
         with tag.div(_class="jumbotron container context", style=style) as r:
-            t = tag.h1(title, id="%s" % title.replace(' ', ''))
+            t = tag.h1(title, id="%s" %
+                                 rng.HelperFunctions.id_with_random(title))
             # creates a reference button with link
             if 'reference' in kwargs:
                 t.add(rng.HelperFunctions.ref_button(kwargs.get('reference')))
@@ -725,6 +731,7 @@ class Assets:
     Assets allows one to either download and map all dependent CSS and JS files, or
     use existing CSS and JS files
     """
+
     @staticmethod
     def local(rel_path):
         """
