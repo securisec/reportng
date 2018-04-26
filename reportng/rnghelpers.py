@@ -37,6 +37,8 @@ class JSCSS:
     progressbar_js = "https://cdn.rawgit.com/securisec/reportng/master/js/progressbar.js"
     #: mark_js: Constant that handles mark.js
     mark_js = "https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js"
+    #: popper_js = Constant that handles popper.js
+    popper_js = "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
 
 
 class CSSControl:
@@ -58,6 +60,12 @@ class JSCustom:
     """
     Class that handles all the custom JS code. It is best not to modify any of this code.
     """
+
+    tooltip_js = """
+                $(function () {
+                    $('[data-toggle="tooltip"]').tooltip()
+                })
+                """
 
     highlight_js = """
                 function clickHighlight() {

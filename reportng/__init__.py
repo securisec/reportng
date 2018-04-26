@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.57'
+__version__ = '0.58'
 
 
 class ReportWriter:
@@ -89,9 +89,16 @@ class ReportWriter:
                      content="width=device-width, initial-scale=1")
             # main style components
             tag.script(src=rng.JSCSS.jquery)
+            tag.script(src=rng.JSCSS.popper_js)
             tag.script(src=rng.JSCSS.bs4_js)
             if not self.search == False:
                 tag.script(src=rng.JSCSS.mark_js)
+
+            # JS for tooltip
+            tag.command('JS for tooltip')
+            tag.script(raw(
+                rng.JSCustom.tooltip_js
+            ))
 
             # JS for mark_js
             tag.comment('JS for mark.js')
@@ -205,15 +212,17 @@ class ReportWriter:
                                            type="button", id="dropdownMenuButton", data_toggle="dropdown",
                                            aria_haspopup="true", aria_expanded="false")
                                 with tag.ul(_class="dropdown-menu dropdown-menu-right",
-                                            aria_labelledby="dropdownMenuButton", id="ddmenu"):
+                                            aria_labelledby="dropdownMenuButton", id="ddmenu",
+                                            style="max-height: 300px; height: auto; overflow: scroll"):
                                     # input box for filtering dropdown
                                     tag.input(_class="form-control-sm", id="ddfilter",
                                               type="text", placeholder="Filter..")
                         # highlight box form starts here
                         # input for search box
                         if not self.search == False:
-                            tag.input(_class="form-control mr-sm-2",
-                                      type="search", placeholder="Search")
+                            tag.input(_class="form-control mr-sm-2", type="search", placeholder="Search",
+                                      data_toggle="tooltip", data_placement="bottom",
+                                      title="Regex capable. Case sensitive.")
                             # Show search hit count
                             tag.span("0", id="searchcount",
                                      style="color:%s; font-size: initial; padding-right: 8; align-self: center;" % highlight_color)
@@ -713,7 +722,7 @@ class ReportWriter:
                         title.replace(' ', ''), kwargs.get('modal'))
         return rng.HelperFunctions.convert_to_string(r)
 
-    def report_custom_html(self, html):
+    def report_section_custom_html(self, html):
         """
         Add any custom html inside a jumbotron.
 

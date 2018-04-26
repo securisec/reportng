@@ -60,7 +60,7 @@ report += r.report_cards(
     section=True, title='title', border_only=True
 )
 print('Custom html')
-report += r.report_custom_html('<p>some text</p>')
+report += r.report_section_custom_html('<p>some text</p>')
 print('report_cards')
 report += r.report_footer(message='message', github='a',
                           linkedin='a', email='a', twitter='a', alert=('green', 'some message here'))
