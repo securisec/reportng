@@ -33,8 +33,57 @@ Installation
 Documentation
 =============
 
-.. automodule:: reportng
-    :members:
+ReportWriter.__init__
+---------------------
+.. automethod:: reportng.ReportWriter.__init__
+
+ReportWriter.report_header
+--------------------------
+.. automethod:: reportng.ReportWriter.report_header
+
+ReportWriter.report_section
+---------------------------
+.. automethod:: reportng.ReportWriter.report_section
+
+ReportWriter.report_image_carousel
+----------------------------------
+.. automethod:: reportng.ReportWriter.report_image_carousel
+
+ReportWriter.report_asciinema
+-----------------------------
+.. automethod:: reportng.ReportWriter.report_asciinema
+
+ReportWriter.report_code_section
+--------------------------------
+.. automethod:: reportng.ReportWriter.report_code_section
+
+ReportWriter.report_captions
+----------------------------
+.. automethod:: reportng.ReportWriter.report_captions
+
+ReportWriter.report_table
+-------------------------
+.. automethod:: reportng.ReportWriter.report_table
+
+ReportWriter.report_cards
+-------------------------
+.. automethod:: reportng.ReportWriter.report_cards
+
+ReportWriter.report_footer
+--------------------------
+.. automethod:: reportng.ReportWriter.report_footer
+
+ReportWriter.report_list_group
+------------------------------
+.. automethod:: reportng.ReportWriter.report_list_group
+
+ReportWriter.report_section_custom_html
+---------------------------------------
+.. automethod:: reportng.ReportWriter.report_section_custom_html
+
+ReportWriter.report_save
+------------------------
+.. automethod:: reportng.ReportWriter.report_save
 
 .. toctree::
    :maxdepth: 2
