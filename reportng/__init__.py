@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.56'
+__version__ = '0.57'
 
 
 class ReportWriter:
@@ -69,7 +69,8 @@ class ReportWriter:
 
         :param str theme: Name of any bootswatch theme. Default is lux
         :param str highlight_color: any rgb color. default is #f1c40f
-        :param str script: Kwarg Pass additional JS/jquery to add to header
+        :param str script: warg Pass additional JS/jquery to add to header
+        :param str style: kwarg Pass additional custom CSS
         :param str navbar_bg: Controls the color of the navbar.
         :return: The head tag for the report.
 
@@ -169,6 +170,11 @@ class ReportWriter:
                 mark.current {background: orangered;}
                 """ % highlight_color
             ))
+
+            if 'style' in kwargs:
+                tag.style(raw(
+                    kwargs.get('style')
+                ))
 
             # Navbar on top with 2 margin to seperate from first jumbotron. add class mb-2
             with tag.nav(
