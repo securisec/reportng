@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.58'
+__version__ = '0.58.1'
 
 
 class ReportWriter:
@@ -797,16 +797,17 @@ class Assets:
         for k, v in change.items():
             if not '__' in k:
                 local_file = v.split('/')[-1]
-                with open(download_path + local_file, 'w+') as f:
-                    if 'https://bootswatch.com/4/' in v:
-                        v = v.replace('lux', theme)
-                        local_file = v.split('/')[-1]
-                    headers = {
-                        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
-                    }
-                    f.write(get(v, headers=headers).text)
-                    logging.info('Downloaded %s to %s' % (v, download_path))
-                    setattr(rng.JSCSS, k, rel_path + local_file)
+                if not os.path.exists(download_path + local_file):
+                    with open(download_path + local_file, 'w+') as f:
+                        if 'https://bootswatch.com/4/' in v:
+                            v = v.replace('lux', theme)
+                            local_file = v.split('/')[-1]
+                        headers = {
+                            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+                        }
+                        f.write(get(v, headers=headers).text)
+                        logging.info('Downloaded %s to %s' % (v, download_path))
+                        setattr(rng.JSCSS, k, rel_path + local_file)
 
 # TODO: add a brand image that is resized with the navbar
 # TODO: keep the image jumbotron static no matter the size of the picture
