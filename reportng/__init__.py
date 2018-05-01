@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.58.1'
+__version__ = '0.58.2'
 
 
 class ReportWriter:
@@ -62,7 +62,8 @@ class ReportWriter:
         self.search = search
         self.theme_preview = theme_preview
 
-    def report_header(self, theme='lux', highlight_color='#f1c40f', navbar_bg='primary', **kwargs):
+    def report_header(self, theme='lux', highlight_color='#f1c40f', navbar_bg='primary',
+                      custom_css='', **kwargs):
         """
         Controls the link and script tags in the head. This method should always be called
         at the top
@@ -70,7 +71,7 @@ class ReportWriter:
         :param str theme: Name of any bootswatch theme. Default is lux
         :param str highlight_color: any rgb color. default is #f1c40f
         :param str script: warg Pass additional JS/jquery to add to header
-        :param str style: kwarg Pass additional custom CSS
+        :param str custom_css: Pass additional custom CSS. This is in the header, and controls style for the whole report
         :param str navbar_bg: Controls the color of the navbar.
         :return: The head tag for the report.
 
@@ -178,10 +179,9 @@ class ReportWriter:
                 """ % highlight_color
             ))
 
-            if 'style' in kwargs:
-                tag.style(raw(
-                    kwargs.get('style')
-                ))
+            if custom_css != '':
+                tag.comment('Custom CSS starts here')
+                tag.style(raw(custom_css))
 
             # Navbar on top with 2 margin to seperate from first jumbotron. add class mb-2
             with tag.nav(
@@ -241,7 +241,7 @@ class ReportWriter:
                 ))
         return str(report_head)
 
-    def report_section(self, title, content, pre_tag=True, tag_color='default',
+    def report_section(self, title, content, html_content='', pre_tag=True, tag_color='default',
                        title_color=True, overflow=rng.CSSControl.css_overflow,
                        text_color='primary', h2_title=False, **kwargs):
         """
@@ -259,7 +259,7 @@ class ReportWriter:
         :param bool section: Kwarg Set to True to append the section to the preceding section. Default is false
         :param tuple reference: Kwarg Adds a small button which hrefs to a user supplied link. Is a tuple. First value is color, second is link
         :param dict badge: Kwarg Adds badges. Key is the color, and value is the message.
-        :param str custom_html: Insert raw html to be added to the end of the section
+        :param str html_content: Insert raw html to be added to the end of the section
         :param dict modal: Create a modal. Is a dictionary. Valid keys are button, title and content
 
         :return: a jumbotron object
@@ -308,8 +308,8 @@ class ReportWriter:
                                           rng.HelperFunctions.color_to_tag(text_color))
             if 'badge' in kwargs:
                 rng.HelperFunctions.create_badges(kwargs.get('badge'))
-            if 'custom_html' in kwargs:
-                raw(kwargs.get('custom_html'))
+            if html_content != '':
+                raw(html_content)
             if 'modal' in kwargs:
                 if isinstance(kwargs.get('modal'), dict):
                     rng.HelperFunctions.make_modals(

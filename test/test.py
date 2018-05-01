@@ -10,7 +10,7 @@ print('download_assets')
 
 r = reportng.ReportWriter(report_name='somename', brand='somebrand',
                           asciinema=True, code=True, pbar=True, theme_preview=True)
-report = r.report_header(script='alert(123);')
+report = r.report_header(script='alert(123);', custom_css='h1{color: white;}', navbar_bg='dark')
 print('report_header')
 content = """
     # fasfdds
