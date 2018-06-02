@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.59'
+__version__ = '0.59.1'
 
 
 class ReportWriter:
@@ -320,7 +320,8 @@ class ReportWriter:
                         title.replace(' ', ''), kwargs.get('modal'))
         return str(rng.HelperFunctions.convert_to_string(r))
 
-    def report_section_collapsible(self, title, content='', header_color='default', raw_html='', pre_tag=True):
+    def report_section_collapsible(self, title, content='', header_color='default', raw_html='', pre_tag=True,
+                                   **kwargs):
         """
         Is used to create a collapsible jumbotron container which is collapsed by default.
 
@@ -329,11 +330,12 @@ class ReportWriter:
         :param str header_color: color of the header, defaults to 'default'
         :param str raw_html: use raw html content instead of generated content, defaults to ''
         :param bool pre_tag: if set to false, uses a p tag, defaults to True
+        :param dict kwargs: Applicable kwargs are alert and badge. Refer to report_section for format
         """
 
         color = 'bg-%s' % rng.HelperFunctions.color_to_tag(header_color)
-        return rng.HelperFunctions.accordian_collapse(color=color, title=title,
-                                                      content=content, pre=pre_tag, raw_html=raw_html)
+        return rng.HelperFunctions.accordian_collapse(color, title,
+                                                      content, pre_tag, raw_html, **kwargs)
 
     def report_image_carousel(self, *args, **kwargs):
         """

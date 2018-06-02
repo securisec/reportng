@@ -433,7 +433,7 @@ class HelperFunctions:
                             'Close', type="button", _class="btn btn-sm btn-secondary", data_dismiss="modal")
 
     @staticmethod
-    def accordian_collapse(color, title, content, pre, raw_html):
+    def accordian_collapse(color, title, content, pre, raw_html, **kwargs):
         """
         Creates a collapsible accordian
         """
@@ -446,11 +446,15 @@ class HelperFunctions:
                            aria_expanded="true", aria_controls="collapse%s" % title_random, id=title_random)
                 with tag.div(id="collapse%s" % title_random, _class="collapse",
                              aria_labelledby="headingOne%s" % title_random, data_parent="#accordion"):
-                    with tag.div(_class="card-body"):
+                    with tag.div(_class="card-body context"):
                         if raw_html != '':
                             raw(raw_html)
                         elif pre:
                             tag.pre(content)
                         else:
                             tag.p(content)
+                if 'alert' in kwargs:
+                    HelperFunctions.make_alert(kwargs.get('alert'))
+                if 'badge' in kwargs:
+                    HelperFunctions.create_badges(kwargs.get('badge'))
         return HelperFunctions.convert_to_string(h)
