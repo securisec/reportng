@@ -45,9 +45,9 @@ ReportWriter.report_section
 ---------------------------
 .. automethod:: reportng.ReportWriter.report_section
 
-ReportWriter.report_section_collapseable
-----------------------------------------
-.. automethod:: reportng.ReportWriter.report_section_collapseable
+ReportWriter.report_section_collapsible
+---------------------------------------
+.. automethod:: reportng.ReportWriter.report_section_collapsible
 
 ReportWriter.report_image_carousel
 ----------------------------------
