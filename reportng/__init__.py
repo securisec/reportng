@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.58.2'
+__version__ = '0.59'
 
 
 class ReportWriter:
@@ -73,6 +73,7 @@ class ReportWriter:
         :param str script: warg Pass additional JS/jquery to add to header
         :param str custom_css: Pass additional custom CSS. This is in the header, and controls style for the whole report
         :param str navbar_bg: Controls the color of the navbar.
+        :param bool bootstrap: Set to True to get default bootstrap theme. Does not work with local files
         :return: The head tag for the report.
 
         Example showing how to change the default theme:
@@ -135,7 +136,10 @@ class ReportWriter:
 
             # bootswatch style sheets
             tag.comment('style sheets')
-            if theme != 'lux':
+            if 'bootstrap' in kwargs:
+                if kwargs['bootstrap']:
+                    bootswatch = 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css'
+            elif theme != 'lux':
                 bootswatch = "https://bootswatch.com/4/%s/bootstrap.min.css" % theme
             else:
                 bootswatch = rng.JSCSS.bootswatch
@@ -292,7 +296,7 @@ class ReportWriter:
             else:
                 t = tag.h1(title, _class="%s-%s" %
                                          (color, rng.HelperFunctions.color_to_tag(tag_color)),
-                           id="%s" % rng.HelperFunctions.id_with_random(title))
+                           id="%s" % rng.HelperFunctions.id_with_random(5, title))
             if 'reference' in kwargs:
                 t.add(rng.HelperFunctions.ref_button(kwargs.get('reference')))
             # creates dismissable alert box
@@ -315,6 +319,21 @@ class ReportWriter:
                     rng.HelperFunctions.make_modals(
                         title.replace(' ', ''), kwargs.get('modal'))
         return str(rng.HelperFunctions.convert_to_string(r))
+
+    def report_section_collapsible(self, title, content='', header_color='default', raw_html='', pre_tag=True):
+        """
+        Is used to create a collapsible jumbotron container which is collapsed by default.
+
+        :param str title: title of the section
+        :param str content: content for the section, defaults to ''
+        :param str header_color: color of the header, defaults to 'default'
+        :param str raw_html: use raw html content instead of generated content, defaults to ''
+        :param bool pre_tag: if set to false, uses a p tag, defaults to True
+        """
+
+        color = 'bg-%s' % rng.HelperFunctions.color_to_tag(header_color)
+        return rng.HelperFunctions.accordian_collapse(color=color, title=title,
+                                                      content=content, pre=pre_tag, raw_html=raw_html)
 
     def report_image_carousel(self, *args, **kwargs):
         """
@@ -415,7 +434,8 @@ class ReportWriter:
         with tag.div(_class="jumbotron jumbomargin container",
                      style=style) as a:
             if title != '':
-                tag.h1(title, id="%s" % rng.HelperFunctions.id_with_random(title))
+                tag.h1(title, id="%s" %
+                                 rng.HelperFunctions.id_with_random(5, title))
             # create dismissable alert box
             if 'alert' in kwargs:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
@@ -455,7 +475,8 @@ class ReportWriter:
             style = rng.CSSControl.not_sticky_section
         with tag.div(_class="jumbotron container context",
                      style=style) as c:  # padding mods
-            t = tag.h1(title, id="%s" % rng.HelperFunctions.id_with_random(title))
+            t = tag.h1(title, id="%s" %
+                                 rng.HelperFunctions.id_with_random(5, title))
             if 'reference' in kwargs:
                 t.add(rng.HelperFunctions.ref_button(kwargs.get('reference')))
             # create dismissable alert box
@@ -544,7 +565,7 @@ class ReportWriter:
         with tag.div(_class="jumbotron container context", style=style) as c:  # padding mods
             if 'title' in kwargs:
                 tag.h1(kwargs.get('title'), id="%s" %
-                                               rng.HelperFunctions.id_with_random(kwargs.get('title')))
+                                               rng.HelperFunctions.id_with_random(5, kwargs.get('title')))
             # create dismissable alert box
             if 'alert' in kwargs:
                 rng.HelperFunctions.make_alert(kwargs.get('alert'))
@@ -699,7 +720,7 @@ class ReportWriter:
             style = rng.CSSControl.css_overflow
         with tag.div(_class="jumbotron container context", style=style) as r:
             t = tag.h1(title, id="%s" %
-                                 rng.HelperFunctions.id_with_random(title))
+                                 rng.HelperFunctions.id_with_random(5, title))
             # creates a reference button with link
             if 'reference' in kwargs:
                 t.add(rng.HelperFunctions.ref_button(kwargs.get('reference')))
@@ -806,7 +827,8 @@ class Assets:
                             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
                         }
                         f.write(get(v, headers=headers).text)
-                        logging.info('Downloaded %s to %s' % (v, download_path))
+                        logging.info('Downloaded %s to %s' %
+                                     (v, download_path))
                         setattr(rng.JSCSS, k, rel_path + local_file)
 
 # TODO: add a brand image that is resized with the navbar

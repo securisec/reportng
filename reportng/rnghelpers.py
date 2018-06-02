@@ -174,6 +174,7 @@ class JSCustom:
     themes_preview = """
             $('.ddtheme').click(function(e){
             themes = {
+                'Default' : 'https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css',
                 'Cerulean' : 'https://bootswatch.com/4/cerulean/bootstrap.min.css',
                 'Cosmo' : 'https://bootswatch.com/4/cosmo/bootstrap.min.css',
                 'Cyborg' : 'https://bootswatch.com/4/cyborg/bootstrap.min.css',
@@ -216,6 +217,7 @@ class CustomHTML:
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Themes</a>
             <div class="dropdown-menu" aria-labelledby="dropdownId">
+            <a class="dropdown-item ddtheme" href="javascript:void(0)">Default</a>
             <a class="dropdown-item ddtheme" href="javascript:void(0)">Cerulean</a>
             <a class="dropdown-item ddtheme" href="javascript:void(0)">Cosmo</a>
             <a class="dropdown-item ddtheme" href="javascript:void(0)">Cyborg</a>
@@ -282,9 +284,9 @@ class HelperFunctions:
                   'red', 'green', 'blue', 'yellow', 'light']
 
     @staticmethod
-    def id_with_random(title):
+    def id_with_random(length, title):
         random_string = ''.join(
-            [choice('abcdefghijklmnopqrstuvwxyz') for n in range(10)])
+            [choice('abcdefghijklmnopqrstuvwxyz') for n in range(length)])
         return ''.join(e for e in title if e.isalnum()) + random_string
 
     @staticmethod
@@ -396,8 +398,8 @@ class HelperFunctions:
             if k not in HelperFunctions.valid_tags:
                 raise NotValidTag('Choose a valid tag color from\n%s' %
                                   ' '.join(HelperFunctions.valid_tags))
-            if len(v) > 14:
-                logging.warning('Do you really want a badge that long?')
+            # if len(v) > 14:
+            #     logging.warning('Do you really want a badge that long?')
             total += str(tag.span(v, _class="badge badge-%s float-right" %
                                             HelperFunctions.color_to_tag(k)))
         return total
@@ -410,7 +412,8 @@ class HelperFunctions:
             button = info['button']
         for k in ['title', 'content']:
             if not k in info:
-                raise NotValidTag('Make sure to use both title and content keys')
+                raise NotValidTag(
+                    'Make sure to use both title and content keys')
         modal_title = info['title'].replace(' ', '')
         modal_content = info['content']
         tag.button(button, type="button", _class="btn btn-primary btn-md",
@@ -423,7 +426,31 @@ class HelperFunctions:
                         tag.h4(modal_title, _class="modal-title",
                                id="model%s" % modal_title)
                     with tag.div(_class="modal-body"):
-                        tag.div(modal_content, _class="container-fluid", style="word-wrap: break-word;")
+                        tag.div(modal_content, _class="container-fluid",
+                                style="word-wrap: break-word;")
                     with tag.div(_class="modal-footer"):
                         tag.button(
                             'Close', type="button", _class="btn btn-sm btn-secondary", data_dismiss="modal")
+
+    @staticmethod
+    def accordian_collapse(color, title, content, pre, raw_html):
+        """
+        Creates a collapsible accordian
+        """
+        title_random = HelperFunctions.id_with_random(5, title)
+        with tag.div(_class="jumbotron container") as h:
+            # with tag.div(id="accordian"):
+            with tag.div(_class="card"):
+                with tag.div(_class="card-header %s" % color, id="headingOne%s" % title_random):
+                    tag.h1(title, _class=color, data_toggle="collapse", data_target="#collapse%s" % title_random,
+                           aria_expanded="true", aria_controls="collapse%s" % title_random, id=title_random)
+                with tag.div(id="collapse%s" % title_random, _class="collapse",
+                             aria_labelledby="headingOne%s" % title_random, data_parent="#accordion"):
+                    with tag.div(_class="card-body"):
+                        if raw_html != '':
+                            raw(raw_html)
+                        elif pre:
+                            tag.pre(content)
+                        else:
+                            tag.p(content)
+        return HelperFunctions.convert_to_string(h)

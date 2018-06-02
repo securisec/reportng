@@ -42,6 +42,7 @@ report += r.report_code_section(title='title', code="""
         hljs.highlightBlock(block);
     });
     });)""", alert=('green', 'some message here'))
+report += r.report_section_collapsible('some title', content, 'green')
 print('report_code')
 report += r.report_captions('test')
 print('report_captions')
