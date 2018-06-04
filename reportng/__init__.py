@@ -23,7 +23,7 @@ elif sys.version[0] == '3':
     from . import rnghelpers as rng
 
 __author__ = 'securisec'
-__version__ = '0.59.1'
+__version__ = '0.59.2'
 
 
 class ReportWriter:
@@ -288,7 +288,7 @@ class ReportWriter:
         else:
             style = rng.CSSControl.not_sticky_section
         # creates the jumbotron. User dictates if it is pre or p tag
-        with tag.div(_class="jumbotron container context",
+        with tag.div(_class="jumbotron container context reportng-report-section-class",
                      style=style) as r:  # padding mods
             # can change the text color, or the background color
             if h2_title:
@@ -320,8 +320,7 @@ class ReportWriter:
                         title.replace(' ', ''), kwargs.get('modal'))
         return str(rng.HelperFunctions.convert_to_string(r))
 
-    def report_section_collapsible(self, title, content='', header_color='default', raw_html='', pre_tag=True,
-                                   **kwargs):
+    def report_section_collapsible(self, title, content='', header_color='default', raw_html='', pre_tag=True, **kwargs):
         """
         Is used to create a collapsible jumbotron container which is collapsed by default.
 
@@ -354,7 +353,7 @@ class ReportWriter:
         if kwargs:
             ordered_kwargs = list(OrderedDict(kwargs).values())
         # create jumbotron container
-        with tag.div(_class="jumbotron jumbomargin container",
+        with tag.div(_class="jumbotron jumbomargin container reportng-image-carousel-class",
                      style=rng.CSSControl.sticky_section_css) as i:
             with tag.div(_class="carousel slide", id="carousel_controls", data_interval="false",
                          data_ride="carousel"):
@@ -380,7 +379,7 @@ class ReportWriter:
                                     src=image, _class="img-fluid img-thumbnail rounded mx-auto d-block")
                                 try:
                                     if kwargs:
-                                        tag.div(_class="carousel-caption").add(
+                                        tag.div(_class="carousel-caption reportng-image-caption-class").add(
                                             tag.p(ordered_kwargs[index_num]))
                                 except IndexError:
                                     logging.exception(
@@ -433,7 +432,7 @@ class ReportWriter:
         else:
             style = rng.CSSControl.not_sticky_section
 
-        with tag.div(_class="jumbotron jumbomargin container",
+        with tag.div(_class="jumbotron jumbomargin container reportng-acsiinema-class",
                      style=style) as a:
             if title != '':
                 tag.h1(title, id="%s" %
@@ -475,7 +474,7 @@ class ReportWriter:
             style = rng.CSSControl.sticky_section_css
         else:
             style = rng.CSSControl.not_sticky_section
-        with tag.div(_class="jumbotron container context",
+        with tag.div(_class="jumbotron container context reportng-code-section-class",
                      style=style) as c:  # padding mods
             t = tag.h1(title, id="%s" %
                                  rng.HelperFunctions.id_with_random(5, title))
@@ -509,7 +508,7 @@ class ReportWriter:
             style = rng.CSSControl.sticky_section_css
         else:
             style = "margin-top:-30;"
-        with tag.div(_class="container text-center", style=style) as s:
+        with tag.div(_class="container text-center reportng-captions-class", style=style) as s:
             tag.p(content, _class="text-%s" %
                                   rng.HelperFunctions.color_to_tag(text_color))
             if 'custom_html' in kwargs:
@@ -564,7 +563,7 @@ class ReportWriter:
         elif len(table_header) != check_length:
             raise rng.TableError('Header not the same length as data')
         # starts building the table
-        with tag.div(_class="jumbotron container context", style=style) as c:  # padding mods
+        with tag.div(_class="jumbotron container context reportng-table-class", style=style) as c:  # padding mods
             if 'title' in kwargs:
                 tag.h1(kwargs.get('title'), id="%s" %
                                                rng.HelperFunctions.id_with_random(5, kwargs.get('title')))
@@ -575,8 +574,7 @@ class ReportWriter:
                 with tag.table(_class="table table-striped display nowrap table-hover", style="width: 90%") as tables:
                     # Make table header
                     if table_header:
-                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(
-                                tag.tr()):
+                        with tag.thead(_class="table-%s" % rng.HelperFunctions.color_to_tag(header_color)).add(tag.tr()):
                             if kwargs.get('tindex') == True:
                                 tag.th('Index')
                             for h in range(len(table_header)):
@@ -668,7 +666,7 @@ class ReportWriter:
             >>> r += report.report_footer(message='securisec', twitter='https://twitter.com/securisec')
         """
         # creates the footer
-        with tag.footer(_class="page-footer") as footer:
+        with tag.footer(_class="page-footer reportng-footer-class") as footer:
             with tag.div(_class="container"):
                 with tag.div(_class="row"):
                     with tag.div(_class="mb-4"):
@@ -720,7 +718,7 @@ class ReportWriter:
             style = rng.CSSControl.sticky_section_css
         else:
             style = rng.CSSControl.css_overflow
-        with tag.div(_class="jumbotron container context", style=style) as r:
+        with tag.div(_class="jumbotron container context reportng-list-group-class", style=style) as r:
             t = tag.h1(title, id="%s" %
                                  rng.HelperFunctions.id_with_random(5, title))
             # creates a reference button with link
@@ -751,7 +749,7 @@ class ReportWriter:
 
         :param str html: Any custom html
         """
-        with tag.div(_class="jumbotron container context", style='padding:0') as c:
+        with tag.div(_class="jumbotron container context reportng-custom-html-class", style='padding:0') as c:
             raw(html)
         return rng.HelperFunctions.convert_to_string(c)
 
@@ -774,7 +772,6 @@ class Assets:
     Assets allows one to either download and map all dependent CSS and JS files, or
     use existing CSS and JS files
     """
-
     @staticmethod
     def local(rel_path):
         """

@@ -366,7 +366,9 @@ class HelperFunctions:
         if len(args[0]) == 2 and isinstance(args, tuple):
             color = args[0][0]
             message = args[0][1]
-            with tag.div(message, _class="alert alert-dismissible alert-%s" % HelperFunctions.color_to_tag(color)) as a:
+            with tag.div(message,
+                         _class="reportng-alert-message-class alert alert-dismissible alert-%s" % HelperFunctions.color_to_tag(
+                                 color)) as a:
                 raw('<button type="button" class="close" data-dismiss="alert">&times;</button>')
         else:
             raise NotValidTag('Use two values in the tuple')
@@ -380,7 +382,9 @@ class HelperFunctions:
         if len(args[0]) == 2 and isinstance(args, tuple):
             color = args[0][0]
             link = args[0][1]
-            b = tag.a("Reference", _class="btn btn-outline-%s btn-sm float-right" % HelperFunctions.color_to_tag(color),
+            b = tag.a("Reference",
+                      _class="reportng-ref-button-class btn btn-outline-%s btn-sm float-right" % HelperFunctions.color_to_tag(
+                          color),
                       href=link, role="button", target='_blank')
             return b
         else:
@@ -400,7 +404,7 @@ class HelperFunctions:
                                   ' '.join(HelperFunctions.valid_tags))
             # if len(v) > 14:
             #     logging.warning('Do you really want a badge that long?')
-            total += str(tag.span(v, _class="badge badge-%s float-right" %
+            total += str(tag.span(v, _class="reportng-badge-class badge badge-%s float-right" %
                                             HelperFunctions.color_to_tag(k)))
         return total
 
@@ -416,19 +420,19 @@ class HelperFunctions:
                     'Make sure to use both title and content keys')
         modal_title = info['title'].replace(' ', '')
         modal_content = info['content']
-        tag.button(button, type="button", _class="btn btn-primary btn-md",
+        tag.button(button, type="button", _class="btn btn-primary btn-md reportng-button-class",
                    data_toggle="modal", data_target="#%s" % modal_title)
         with tag.div(_class="modal fade", id="%s" % modal_title, tabindex="-1",
                      role="dialog", aria_labelledby="model%s" % modal_title, aria_hidden="true"):
             with tag.div(_class="modal-dialog", role="document"):
-                with tag.div(_class="modal-content"):
-                    with tag.div(_class="modal-header"):
-                        tag.h4(modal_title, _class="modal-title",
+                with tag.div(_class="modal-content reportng-modal-content-class"):
+                    with tag.div(_class="modal-header reportng-modal-header-class"):
+                        tag.h4(modal_title, _class="modal-title reportng-modal-title-class",
                                id="model%s" % modal_title)
-                    with tag.div(_class="modal-body"):
+                    with tag.div(_class="modal-body reportng-modal-body-class"):
                         tag.div(modal_content, _class="container-fluid",
                                 style="word-wrap: break-word;")
-                    with tag.div(_class="modal-footer"):
+                    with tag.div(_class="modal-footer reportng-modal-footer-class"):
                         tag.button(
                             'Close', type="button", _class="btn btn-sm btn-secondary", data_dismiss="modal")
 
@@ -438,15 +442,16 @@ class HelperFunctions:
         Creates a collapsible accordian
         """
         title_random = HelperFunctions.id_with_random(5, title)
-        with tag.div(_class="jumbotron container") as h:
+        with tag.div(_class="jumbotron container reportng-section-collapsible-class") as h:
             # with tag.div(id="accordian"):
             with tag.div(_class="card"):
-                with tag.div(_class="card-header %s" % color, id="headingOne%s" % title_random):
+                with tag.div(_class="card-header %s reportng-collapse-card-header-class" % color,
+                             id="headingOne%s" % title_random):
                     tag.h1(title, _class=color, data_toggle="collapse", data_target="#collapse%s" % title_random,
                            aria_expanded="true", aria_controls="collapse%s" % title_random, id=title_random)
                 with tag.div(id="collapse%s" % title_random, _class="collapse",
                              aria_labelledby="headingOne%s" % title_random, data_parent="#accordion"):
-                    with tag.div(_class="card-body context"):
+                    with tag.div(_class="card-body context reportng-collapse-card-body-class"):
                         if raw_html != '':
                             raw(raw_html)
                         elif pre:
