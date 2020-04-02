@@ -1,0 +1,11 @@
+Core:
+  ✔ deprecate python 2
+  ☐ github actions build for all platforms
+  ☐ update tests
+  ☐ update docs
+
+Wishlist:
+  ☐ add a brand image that is resized with the navbar
+  ☐ keep the image jumbotron static no matter the size of the picture
+  ☐ make header method mandatory
+  ☐ weird how the title of the code section is getting outside

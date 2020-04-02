@@ -1,0 +1,67 @@
+name: Run tests
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+        python-version:
+          - "3.6"
+          - "3.7"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run pytest
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{matrix.python-version}}
+
+      - name: Install reportng
+        run: |
+          pip install .
+
+      - name: Install test requirements
+        run: pip install pytest pytest-cov sphinx
+
+      - name: Test with pytest
+        run: pytest --disable-pytest-warnings --cov-report=xml --cov=chepy --cov-config=.coveragerc tests/
+
+      - name: Test docs
+        run: make -C docs/ clean html
+
+      - uses: actions/cache@v1
+        if: startsWith(runner.os, 'Linux')
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - uses: actions/cache@v1
+        if: startsWith(runner.os, 'macOS')
+        with:
+          path: ~/Library/Caches/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - uses: actions/cache@v1
+        if: startsWith(runner.os, 'Windows')
+        with:
+          path: ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+        

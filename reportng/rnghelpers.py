@@ -6,6 +6,12 @@ from dominate.util import raw
 import logging
 from random import choice
 
+def check_keys(keys:list, check_dict: dict):
+    for k in keys:
+        if not check_dict.get(k):
+            raise TypeError('{} key not found'.format(k))
+    return True
+
 
 class JSCSS:
     """
@@ -359,36 +365,31 @@ class HelperFunctions:
 
     @staticmethod
     # Function to create alerts in sections
-    def make_alert(*args):
+    def make_alert(data):
         """
         Helper function that creates dismissable alerts
         """
-        if len(args[0]) == 2 and isinstance(args, tuple):
-            color = args[0][0]
-            message = args[0][1]
-            with tag.div(message,
-                         _class="reportng-alert-message-class alert alert-dismissible alert-%s" % HelperFunctions.color_to_tag(
-                                 color)) as a:
-                raw('<button type="button" class="close" data-dismiss="alert">&times;</button>')
-        else:
-            raise NotValidTag('Use two values in the tuple')
+        color = data.get('color') or 'primary'
+        message = data.get('message')
+        with tag.div(message,
+                        _class="reportng-alert-message-class alert alert-dismissible alert-%s" % HelperFunctions.color_to_tag(
+                                color)) as a:
+            raw('<button type="button" class="close" data-dismiss="alert">&times;</button>')
         return a
 
     @staticmethod
-    def ref_button(*args):
+    def ref_button(data):
         """
         Places a button with href on it.
         """
-        if len(args[0]) == 2 and isinstance(args, tuple):
-            color = args[0][0]
-            link = args[0][1]
+        if isinstance(data, dict):
+            color = data.get('color') or 'primary'
+            link = data.get('link')
             b = tag.a("Reference",
                       _class="reportng-ref-button-class btn btn-outline-%s btn-sm float-right" % HelperFunctions.color_to_tag(
                           color),
                       href=link, role="button", target='_blank')
             return b
-        else:
-            raise NotValidTag('Use two values in the tuple')
 
     @staticmethod
     def create_badges(b):
@@ -396,16 +397,18 @@ class HelperFunctions:
         Creates badges at the bottom of a section
         """
         total = ''
-        if not isinstance(b, dict):
-            raise NotValidTag('Use a dictionary to pass badge values')
-        for k, v in b.items():
-            if k not in HelperFunctions.valid_tags:
-                raise NotValidTag('Choose a valid tag color from\n%s' %
+        if not isinstance(b, list):
+            raise NotValidTag('Use a list of dictionaries to create badges')
+        for i in range(len(b)):
+            color = b[i].get('color') or 'primary'
+            message = b[i].get('message')
+            assert message, 'No messages passed'
+            assert color in HelperFunctions.valid_tags, NotValidTag('Choose a valid tag color from\n%s' %
                                   ' '.join(HelperFunctions.valid_tags))
             # if len(v) > 14:
             #     logging.warning('Do you really want a badge that long?')
-            total += str(tag.span(v, _class="reportng-badge-class badge badge-%s float-right" %
-                                            HelperFunctions.color_to_tag(k)))
+            total += str(tag.span(message, _class="reportng-badge-class badge badge-%s float-right" %
+                                            HelperFunctions.color_to_tag(color)))
         return total
 
     @staticmethod
@@ -414,12 +417,12 @@ class HelperFunctions:
             button = 'Info'
         else:
             button = info['button']
-        for k in ['title', 'content']:
+        for k in ['title', 'message']:
             if not k in info:
                 raise NotValidTag(
                     'Make sure to use both title and content keys')
         modal_title = info['title'].replace(' ', '')
-        modal_content = info['content']
+        modal_content = info['message']
         tag.button(button, type="button", _class="btn btn-primary btn-md reportng-button-class",
                    data_toggle="modal", data_target="#%s" % modal_title)
         with tag.div(_class="modal fade", id="%s" % modal_title, tabindex="-1",
