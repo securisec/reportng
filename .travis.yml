@@ -1,16 +1,22 @@
 language: python
 python:
-  - "pypy"
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.6"
-
+- '3.6'
+cache:
+- pip
 install:
-  - "pip -v install ."
-
+- pip -v install .
+- pip install pytest pytest-cov sphinx
 script:
-  - "python -V"
-  - 'python -c "import dominate; print(dominate.document())"'
-  - "python ./test/test.py"
-  - "ls -la */*"
+- python -V
+- pytest --disable-pytest-warnings --cov-report=xml --cov=chepy --cov-config=.coveragerc
+  tests/
+- make -C docs/ clean html
+deploy:
+  provider: pypi
+  usern: __token__
+  password:
+    secure: eskf7o+vJKB7Xm3SCtdVp4Ep/UkmJE1YDB+9MdtHFb6aE7h7zT9+ctySeyaNMYMTcVyfuZHwPLedl7KEkFmXfa6CB2sfO4FrrsxnhhG0N6n28hM41KLZG8de74oIxCNdczpjJWeevvBKGOFwBvtBVxnyWW2J1nlUOAkOsdyvVQQCwObyEhaCrPacrEaWNRPrVqb0Jb7CLLXoRKMyIaNZfobIdije35QpSigh+pKQHTCJcvGu7x9eKsjYbMGiPT7PxxB1TA+rN+pyae9kIudcNSdSW90Y9+ahDL2neoAMvftdqDC5GhcoMVd/3FrRaDzr/2/VX2Q2Zhtq8sFDDQH0bFSplDTlhkunZ7J0e6jAGv1d/DQYOAVifY6WHBK3WfGtddXjcDxz7TFLkTS1SlnyZKJrp513Xgc/4WffOeQL/+JPBfuIERhU5Gri9bhk3IqOS5rakbD6yw5i37FCj9y7SwVC0fzvsz2qrbuAivwbbaDf/ikDx4GvLl5IkGXiKIUycW3fB6K0wnWwpRk2uO3ZwNprHWMzKAkw2Upc7UQINfZN7uMfVCV4GOlRBREHe/aBI0dpf4sOJmuj63NEhMuYLtwz099YpLhvx//gExIIdHZGQZXcl6ak4OiLET01LHI9HcVLmk7bScQQTAkFRE3HzO681ySGTLTUyBfgEVNUY3I=
+  on:
+    tags: true
+    skip_cleanup: true
+    skip_existing: true

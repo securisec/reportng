@@ -5,6 +5,7 @@
 .vscode/
 .test
 ignore/
+dtest*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

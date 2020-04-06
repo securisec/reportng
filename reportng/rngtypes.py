@@ -12,12 +12,7 @@ class Alert(TypedDict):
     message: str
 
 
-class Reference(BaseModel):
-    """[summary]
-    
-    Args:
-        TypedDict ([type]): [description]
-    """
+class Reference(TypedDict):
     color: str
     link: str
 

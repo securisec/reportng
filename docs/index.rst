@@ -13,10 +13,9 @@ Some example use cases of ``reportng`` are
 
 ``reportng`` is designed to be stackable. This means that it follows the following convention
 
-* report_header
-* report_section
+* section
 * ...
-* report_footer
+* footer
 
 Social
 ------
@@ -46,19 +45,19 @@ Helpers
 =======
 
 JSCSS
-"""""
+=====
 .. autoclass:: reportng.rnghelpers.JSCSS
     :members:
 
 
 CSSControl
-""""""""""
+==========
 .. autoclass:: reportng.rnghelpers.CSSControl
     :members:
 
 
 JSCustom
-""""""""
+========
 .. autoclass:: reportng.rnghelpers.JSCustom
     :members:
 
@@ -88,10 +87,9 @@ Example
 
     r = reportng.Reportng(report_name='Demo report',
                               brand='securisec')
-    report = r.report_header()
 
     # Multiline support
-    report += r.report_section(
+    report.section(
     'Multiline Demo',
     """
     One line
@@ -100,36 +98,41 @@ Example
 
     # Example stdio reporting
     output = Popen('ls /tmp', shell=True, stdout=PIPE).stdout.read()
-    report += r.report_section('Output of ls', output,
+    report += r.section('Output of ls', output,
                                 tag_color='success')
 
 
     # Example using web requests
     req = requests.get('https://httpbin.org/status/418').text
-    report += r.report_section('Output of requests',
+    report += r.section('Output of requests',
                                 req, tag_color='info')
 
 
     # Add an image carousel
-    report += r.report_add_image_carousel(
+    report += r.image_carousel(
         'foo.jpg',
         'bar.jpg',
         'baz.jpg')
 
 
     # Add description for image carousel
-    report += r.report_notes('Nice pictures!')
+    report += r.caption('Nice pictures!')
 
 
     # Add a footer
-    report += r.report_footer(message='Hello from securisec!',
+    report += r.footer(message='Hello from securisec!',
                               twitter='https://twitter.com/securisec',
                               github='https://github.com/securisec')
 
 
     # Save the report!
-    r.save_report(report, 'demo_report.html')
+    r.save('demo_report.html')
 
+.. toctree::
+    :maxdepth: 3
+    :caption: Contents
+
+    types.rst
 
 Indices and tables
 ==================
