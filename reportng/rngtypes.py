@@ -1,5 +1,4 @@
 from typing_extensions import TypedDict, Literal
-from pydantic import BaseModel
 
 
 class ImageCarouselType(TypedDict):
