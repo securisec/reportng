@@ -1,11 +1,15 @@
 Core:
   ☐ update docs
+    ☐ add sidebar for docs
+  ☐ sonar tests
 
 Wishlist:
   ☐ add a brand image that is resized with the navbar
   ☐ keep the image jumbotron static no matter the size of the picture
   ☐ weird how the title of the code section is getting outside
+
 Archive:
+  ✔ readthe docs is not showing correctly @project(Core)
   ✔ update tests @project(Core)
   ✔ update travis @project(Core)
   ✔ deprecate python 2 @project(Core)

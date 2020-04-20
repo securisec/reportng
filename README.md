@@ -2,10 +2,9 @@
 ![](https://github.com/securisec/reportng/workflows/tests/badge.svg)
 [![Build Status](https://travis-ci.org/securisec/reportng.svg?branch=master)](https://travis-ci.org/securisec/reportng)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](http://reportng.readthedocs.io/en/latest/)
-[![Read the Docs](https://img.shields.io/readthedocs/reportng.svg)]()
 [![PyPI version](https://img.shields.io/pypi/pyversions/reportng.svg)](https://pypi.python.org/pypi/reportng)
 [![Twitter Follow](https://img.shields.io/twitter/follow/securisec.svg?style=social&label=Follow)](https://twitter.com/securisec)
-[![Analytics](https://ga-beacon.appspot.com/UA-113966566-2/reportng/readme)](https://github.com/securisec/reportng)
+
 
 ### Version 1.0.0
 Version 1.0.0 on is python 3 only, and is fully refactored and will not work with any versions prior to it. 

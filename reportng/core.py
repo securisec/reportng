@@ -352,7 +352,7 @@ class Reportng:
             if use_h2_title:
                 tag.h2(title)
             else:
-                t = tag.h1(
+                tag.h1(
                     title,
                     _class="%s-%s"
                     % (color, rng.HelperFunctions.color_to_tag(section_color)),
@@ -609,11 +609,12 @@ class Reportng:
                 tag.pre().add(tag.code(content))
                 if add_badge:
                     rng.HelperFunctions.create_badges(add_badge)
-            if add_modal:
-                if isinstance(add_modal, dict) and rng.check_keys(
-                    ["button", "title", "content"], dict(add_modal)
-                ):
-                    rng.HelperFunctions.make_modals(title.replace(" ", ""), add_modal)
+            if (
+                add_modal
+                and isinstance(add_modal, dict)
+                and rng.check_keys(["button", "title", "content"], dict(add_modal))
+            ):
+                rng.HelperFunctions.make_modals(title.replace(" ", ""), add_modal)
         self.report += str(c)
         return self
 
@@ -725,7 +726,7 @@ class Reportng:
                 with tag.table(
                     _class="table table-striped display nowrap table-hover",
                     style="width: 90%",
-                ) as tables:
+                ):
                     # Make table header
                     if table_header:
                         with tag.thead(
@@ -905,7 +906,7 @@ class Reportng:
         with tag.div(
             _class="jumbotron container context reportng-list-group-class", style=style
         ) as div:
-            t = tag.h1(
+            tag.h1(
                 section_title,
                 id="%s" % rng.HelperFunctions.id_with_random(5, section_title),
             )
@@ -955,7 +956,7 @@ class Reportng:
         Args:
             path (str): Path to save the report. 
         """
-        with open(str(Path(path).resolve()), "w+") as save:
+        with open(str(Path(path).resolve()), "w+", encoding="utf-8") as save:
             save.write(str(self.report))
 
 
@@ -1014,7 +1015,7 @@ class Assets:
             if not "__" in k:
                 local_file = v.split("/")[-1]
                 if not Path(download_path + local_file).exists():
-                    with open(download_path + local_file, "w+") as f:
+                    with open(download_path + local_file, "w+", encoding="utf8") as f:
                         if "https://bootswatch.com/4/" in v:
                             v = v.replace("lux", theme)
                             local_file = v.split("/")[-1]
