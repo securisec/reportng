@@ -21,5 +21,5 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
         "Natural Language :: English",
     ],
-    install_requires=["dominate", "requests", "typing_extensions"],
+    install_requires=["dominate==2.4.0", "requests", "typing_extensions"],
 )
